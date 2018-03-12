@@ -1,0 +1,406 @@
+\documentclass[12pt,spanish]{article}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{caption}
+\usepackage{amsthm}
+\usepackage{multicol}
+\usepackage[outputdir=build]{minted}
+\usepackage{float}
+\usepackage{titling}
+\usepackage{listings}
+\usepackage{array}
+\graphicspath{ {./img/} {../../LaTeX/img/} {/home/csp98/latex/img/}}
+\selectlanguage{spanish}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\renewcommand\listoflistingscaption{Códigos fuente}
+\newtheorem*{definition}{Definición}
+\newtheorem*{aclaration}{Aclaración}
+\makeindex
+
+\title{Arquitectura de Computadores}
+\setlength{\droptitle}{10em}
+\author{Carlos Sánchez Páez}
+\begin{document}
+\begin{titlepage}
+
+\newlength{\centeroffset}
+\setlength{\centeroffset}{-0.5\oddsidemargin}
+\addtolength{\centeroffset}{0.5\evensidemargin}
+\thispagestyle{empty}
+
+\noindent\hspace*{\centeroffset}
+\begin{minipage}{\textwidth}
+
+\centering
+\includegraphics[width=0.9\textwidth]{logo_ugr.jpg}\\[1.4cm]
+
+\textsc{ \Large Arquitectura de Computadores\\[0.2cm]}
+\textsc{GRADO EN INGENIERÍA INFORMÁTICA}\\[1cm]
+
+{\Huge\bfseries Resumen del temario\\}
+\end{minipage}
+
+\vspace{1.5cm}
+\noindent\hspace*{\centeroffset}
+\begin{minipage}{\textwidth}
+\centering
+
+\textbf{Autor}\\ {Carlos Sánchez Páez}\\[2.5ex]
+\includegraphics[width=0.3\textwidth]{etsiit_logo.png}\\[0.1cm]
+\vspace{1.5cm}
+\includegraphics[width=0.5\textwidth]{atc_logo.jpg}\\[0.1cm]
+\vspace{1cm}
+\textsc{Escuela Técnica Superior de Ingenierías Informática y de Telecomunicación}\\
+\vspace{1cm}
+\textsc{Curso 2017-2018}
+\end{minipage}
+\end{titlepage}
+\thispagestyle{empty}
+\newpage
+\tableofcontents{}
+\listoflistings
+\listoffigures
+\thispagestyle{empty}
+\newpage
+
+\section{Tema 1}
+
+\subsection{Arquitecturas paralelas y niveles de paralelismo}
+
+\subsubsection{Niveles y tipos de paralelismo implementados en la arquitectura}
+Un computador es un sistema complejo tanto desde el punto de vista del hardware como desde el del software.
+Para que su estudio sea más sencillo, éste se divide en diferentes niveles de abstracción.\\
+Por ejemplo, a nivel hardware, los niveles podrían ser: de componentes, de circuito electrónico, nivel de lógica digital, RT y nivel de sistema computador. En cada uno de estos niveles se implementa el paralelismo. \\
+Para incrementar las prestaciones de un ssitema se aprovecha el paralelismo (explícito o implícito) en las entradas. Hay dos alternativas para implementar paralelismo en un sistema aprovechando las entradas:
+\begin{enumerate}
+\item \textit{Replicar} componentes del sistema.
+\item \textit{Segmentar} el uso de los componentes.
+\end{enumerate}
+Por ejemplo, el paralelismo en un procesador se implementa replicando unidades funcionales y segmentando en uso de sus componentes. Los computadores paralelos son arquitecturas paralelas que implementan paralelismo \emph{a nivel de sistema computador}. Para ello, replican computadores.
+
+\subsubsection{Niveles y tipos de paralelismo implícito en una aplicación}
+
+En el mercado hay computadores que implementan paralelismo en varios niveles de la arquitectura. En una aplicación se pueden distinguir distintos niveles de paralelismo, que se aprovechan en diferentes niveles del computador. Podemos clasificar estos niveles según el nivel de abstracción dentro del código secuencial \footnote{Código escrito en lenguaje imperativo, próximo a las arquitecturas de flujo de control.} de un programa en el que podamos encontrar el paralelismo.
+
+\paragraph{Dependencia de datos}
+Antes de ver los tipos de paralelismo, veamos lo que son las dependencias de datos.
+Para que el bloque de código $B_{2}$ presente una dependencia de datos con respecto a $B_{1}$:
+\begin{enumerate}
+\item Ambos bloques deben referenciar a una misma posición de memoria M (variable).
+\item $B_{1}$ debe aparecer en el código antes que $B_{2}$
+\end{enumerate}
+\newpage
+\subparagraph{Tipos de dependencias de datos}
+\begin{enumerate}
+\item \textbf{RAW}. Read After Write o \emph{dependencia verdadera}.
+
+\begin{listing}[H]
+\begin{minted}[linenos,xleftmargin=7cm,xrightmargin=7cm]{c}
+...
+a=b+c //[B1 escribe a]
+d=a+c //[B2 lee a]
+...
+\end{minted}
+\caption{Dependencia RAW}
+\end{listing}
+
+\item \textbf{WAW}. Write After Write o \emph{dependencia de salida}.
+
+\begin{listing}[H]
+\begin{minted}[linenos,xleftmargin=7cm,xrightmargin=7cm]{c}
+...
+a=b+c //[B1 escribe a]
+a=d+e //[B2 escribe a]
+...
+\end{minted}
+\caption{Dependencia WAW}
+\end{listing}
+
+\item \textbf{WAR}. Write After Read o \emph{antidependencia}.
+
+\begin{listing}[H]
+\begin{minted}[linenos,xleftmargin=7cm,xrightmargin=7cm]{c}
+...
+b=a+1 //[B1 lee a]
+a=d+e //[B2 escribe a]
+...
+\end{minted}
+\caption{Dependencia WAR}
+\end{listing}
+
+\end{enumerate}
+\paragraph{Paralelismo funcional}
+Podemos considerar que un programa está compuesto por funciones (nivel de funciones), éstas estñan compuestas por bucles (nivel de bucle) y éstos se basan en operaciones (nivel de operaciones). Como nivel superior encontramos al de programas, que pueden formar parte de la misma aplicación y usuario o no.\\
+En general el paralelismo está implícito en mayor o menor grado en la descripción de una aplicación. Dentro del código secuencial podemos encontrar paralelismo implícito en los siguientes niveles de abstracción:
+\begin{enumerate}
+\item \emph{Nivel de programas}. Los diferentes programas que intervienen en una o varias aplicaciones se pueden ejecutar en paralelo. Es poco probable que exista dependencia entre ellos.
+\item \emph{Nivel de funciones}. Un programa puede considerarse constituido por funciones. Se pueden ejecutar en paralelo, siempre que no haya dependencias (riesgos) inevitables entre ellas, como dependencias de datos verdaderas (lectura después de escritura, RAW, \textit{Read After Write}).
+\emph{Nivel de bucle (bloques)}. Una función puede estar basada en la ejecución de uno o vasrios bucles. El código dentro de cada uno se ejecuta múltiples veces, completando una tarea en cada iteración. Se pueden ejecutar en paralelo las iteraciones de un bucle siempre que resolvamos los riesgos derivados de las dependencias verdaderas. Para detectarlas, tendremos que analizar las entradas y las salidas de las iteraciones del bucle.
+\item \emph{Nivel de operaciones}. Se extrae el paralelismo disponible entre operaciones. Aquellas que son independientes se podrán ejecutar en paralelo. Por otra parte, en los procesadores podemos encontrar instrucciones compuestas de varias operaciones que se aplican en secuencia al mismo flujo de datos de entrada. Por tanto, podremos utilizar estas instrucciones compuestas para evitar penalizaciones por dependencias verdaderas.
+\end{enumerate}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{paralelismo.png}
+\caption{Niveles de paralelismo y granularidad}
+\end{figure}
+A este paralelismo que ese puede detectar en distintos niveles de un código secuencial se le denomina \emph{paralelismo funcional}.
+\newpage
+Por ejemplo:
+\begin{listing}[H]
+\begin{minted}[linenos,xleftmargin=4.5cm,xrightmargin=4.5cm]{c}
+#include <stdio.h>
+using namespace std;
+int func1();
+int func2();
+int func3();
+int main(){
+	#pragma omp pararell sections{
+		#pragma omp section
+			func1();
+		#pragma omp section
+			func2();
+		#pragma omp section
+			func3();	
+		}
+}
+
+\end{minted}
+\caption{Paralelismo funcional}
+\end{listing}
+
+\paragraph{Paralelismo de tareas}
+
+El \emph{paralelismo de tareas} se encuentra extrayendo de la definición de la aplicación la estructura lógica de funciones de la aplicación. En esta estruyctura, los bloques son funciones y las conexiones entre ellos reflejan el flujo de datos entre funciones. Analizando esta estructura podemos encotnrar paralelismo entre las funciones.\\
+Está relacionado con el \textbf{paralelismo a nivel de función}.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{paralelismo_tareas.png}
+\caption{Paralelismo de tareas}
+\end{figure}
+
+\paragraph{Paralelismo de datos}
+
+El \emph{paralelismo de datos} está relacionado con el \textbf{paralelismo a nivel de bucle}. Se encuentra implícito en las operaciones con estructuras de datos (vectores y matrices) y se puede extraer de una representación matemática de las operaciones de la aplicación. Por ejemplo, como vectores y matrices se operan mediante bucles, podremos implementarlas mediante paralelismo a nivel de bucle. Así aparece el paralelismo de datos al analizar las operaciones realizadas con la misma estructura de datos pero en distinta iteración.\footnote{Las instrucciones multimedia de los procesadores suelen acelerar el procesamiento vectorial ya que aplican la misma operación en paralelo a múltiples datos dentro de un registro.}\\
+El paralelismo también se puede clasificar en función de la \emph{granularidad} o \emph{magnitud de la tarea} candidata a la paralelización. El grano más pequeño (\textit{grano fino}) se asocia generalmente al paralelismo entre operaciones o instrucciones y el \textit{grueso} al paralelismo entre programas. Entre ambos existe el \textit{grano medio}, asociado a los bloques funcionales lógicos de la aplicación.\\
+Por ejemplo:
+\begin{listing}[H]
+\begin{minted}[linenos,xleftmargin=4.5cm,xrightmargin=4.5cm]{c}
+#include <stdio.h>
+using namespace std;
+const int SIZE=100;
+int main(){
+int a[SIZE];
+int b[SIZE];
+int c[SIZE];
+for(int i=0;i<SIZE;i++)
+	a[i]=b[i]+c[i]
+return 0
+}
+\end{minted}
+\caption{Paralelismo de datos}
+\end{listing}
+\subsubsection{Unidades de ejecución: instrucciones, hebras y procesos}
+
+En el nuvel superior, el sistema operativo se encarga de gestionar la ejecución de unidades de mayor granularidad (\textit{procesos} y \textit{hebras}). Cada proceso en ejecución tiene su propia región de memoria. Los sistemas operativos multihebra permiten que un proceso se componga de una o varias hebras.\\
+La diferencia principal entre hebra y proceso es que una hebra tiene su propia pila y contenido de registros, entre ellos IP (\textit{Instruction Pointer}) que almacena la dirección de la siguiente instrucción a ejecutar por la hebra, pero comparte código, variables globales y otros recursos como archivos abiertos con el resto de hebras del mismo proceso. Estas características hacen que las hebras se puedan crear y destruir en menor tiempo que los procesos y que la comunicación, sincronización y conmutación entre hebras de un proceso sea más rápida que entre procesos. Esto permite que las hebras tengan una \textbf{granularidad menor que los procesos}.\\
+El paralelismo implícito en el código de una aplicación se puede hacer \emph{explícito} a nivel de instrucciones, hebras, procesos o dentro de una instrucción.
+\newpage
+\subsubsection{Relación entre paralelismo implícito, explícito y arquitecturas paralelas}
+
+El paralelismo se puede hacer explícito de varias formas:
+\begin{enumerate}
+\item El paralelismo \emph{entre programas} se utiliza a través de procesos. Cuando se ejecuta un programa, se crea su proceso asociado.
+\item El paralelismo \emph{entre funciones} se puede utilizar a nivel de procesos o de hebras.
+\item El paralelismo \emph{dentro de un bucle} también se puede utilizar a nivel de procesos o hebras. Además, podemos aumentar la granularidad asociando un mayor número de iteraciones a cada unidad de ejecución paralela. También se puede hacer explícito dentro de una instrucción vectorial.
+\item El paralelismo \emph{entre operaciones} se puede aprovechar en arquitecturas con paralelismo a nivel de instrucción (\textit{ILP}), ejecutando en paralelo las instrucciones asociadas a las operaciones independientes.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{paralelismo_implicito_explicito.png}
+\caption{Paralelismo implícito, explícito y arquitecturas paralelas}
+\end{figure}
+
+\subsubsection{Detección, utilización, implementación y extracción de paralelismo}
+
+En los procesadores \textit{ILP} superescalares o segmentados la arquitectura extrae paralelismo. Para ello, se eliminan dependencias de datos falsas entre instrucciones. En estos procesadores, la arquitectura extrae paralelismo \emph{implícito} en las entradas en tiempo de ejecución (\textit{dinámicamente}). El \textbf{grado de paralelismo} de las instrucciones aprovechado se puede incrementar con ayuda de \emph{compilador} y \emph{programador}. En general,\begin{definition}
+El grado de paralelismo de un conjunto de entradas a un sistema es el máximo número de entradas del conjunto que se pueden ejecutar en paralelo.
+\end{definition}
+\begin{aclaration}
+En el caso de los procesadores, las entradas son instrucciones.
+\end{aclaration}
+Debido a las dependencias entre entradas, este grado máximo será generalmente inferior al de entradas del conjunto. En las arquitecturas ILP VLIW \footnote{Instruction Level Parallelism Very Long Instruction Word} el paralelismo está ya \emph{explícito} en las entradas, ya que el paralelismo se determina fuera del hardware. En este caso, el análisis de dependencias es estático; el compilador es el principal responsable de extraer el paralelismo. No obstante, la ayuda de un prograamador puede incrementar el grado de concurrencia aprovechado finalmente por la arquitectura.\\
+Para el compilador es difícil extraer el paralelismo, por lo que si el programador lo hace definiendo hebras y/o procesos se conseguirá mayor concurrencia.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{deteccion_paralelismo.png}
+\caption{Detección, utilización, implementación y extracción del paralelismo}
+\end{figure}
+\subsection{El paralelismo en las arquitecturas}
+\subsubsection{Clasificaciones de las arquitecturas paralelas}
+El paralelismo se ha implementado en las arquitecturas siguiendo dos líneas fundamentales. 
+\begin{enumerate}
+\item \textbf{Replicación de elementos}. Se incluyen unidades funcionales, procesadores, módulos de memoria, etc. entre los que se distribuye el trabajo. Ejemplos: multiprocesadores, procesadores de E/S, etc.
+\item \textbf{Segmentación de cauce}. Consiste en dividir un elemento (unidad funcional, procesador, etc.) en una serie de etapas que funcionan de forma independiente y por las que pasan los operandos, instrucciones, etc. procesados por el elemento. Así, el elemento en cuestión realiza simultáneamente distintas etapas de su procesamiento.
+\end{enumerate} 
+
+La \textbf{clasificación \textit{(o taxonomía)} de Flynn} divide los computadores en cuatro clases según el número de secuencias o flujos \emph{de instrucciones} y flujos o secuencias \emph{de datos} que se pueden procesar simultáneamente en el computador.
+\begin{enumerate}
+\item \textbf{Computadores SISD} (\textit{Single Instruction Single Data}). Un único flujo de instrucciones genera resultados, definiendo un único flujo de datos.
+\item \textbf{Computadores SIMD} (\textit{Single Instruction Multiple Data}). Un único flujo de instrucciones procesa operandos y genera resultados, defiendo varios flujos de datos, ya que cada instrucción codifica realmente varias operaciones iguales que actúan sobre operandos distintos.
+\item \textbf{Computadores MIMD} (\textit{Multiple Instruction Multiple Data}). El computador ejecuta varias secuencias o flujos distintos de instrucciones y cada uno de ellos procesa operandos y genera resultados definiendo un único flujo de instrucciones, de forma que también se generan varios flujos de datos, uno por cada flujo de instrucciones.
+\item \textbf{Computadores MISD} (\textit{Multiple Instruction Single Data}). Se ejecutan varios flujos distintos de instrucciones aunque todos actúan sobre el mismo flujo de datos.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1]{taxonomia_flynn.png}
+\caption{Taxonomía de Flynn}
+\end{figure}
+\paragraph{SISD}
+En un computador \textbf{SISD} existe una única unidad de control que recibe las instrucciones de memoria, las decodifica y genera los códigos que definen la operación correspondiente a cada instrucción que debe realizar la unidad de procesamiento. El flujo de datos se establece a partir de los operandos necesarios para realizar la operación correspondiente (se traen de memoria) y de los resultados generados por las instrucciones (se almacenan en memoria).
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{sisd.png}
+\caption{Arquitectura SISD}
+\end{figure}
+
+\paragraph{SIMD}
+
+En un computador \textbf{SIMD} los códigos que genera la única unidad de control a partir de cada instrucción actúan sobre varias unidades de procesamiento distintas. De esta forma, un computador SIMD puede realizar varias operaciones similares simultáneas con operandos distintos. Cada una de las secuencias de operandos y resultados utilizados por las distintas unidades de proceso definen un flujo de datos diferente.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.8]{simd.png}
+\caption{Arquitectura SIMD}
+\end{figure}
+
+\paragraph{MIMD}
+
+En un computador \textbf{MIMD} existen varias unidades de control que decodifican las instrucciones correspondientes a distintos programas. Cada uno de estos programas procesa conjuntos de datos diferentes, que constituyen distintos flujos de datos.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1]{mimd.png}
+\caption{Arquitectura MIMD}
+\end{figure}
+
+\paragraph{MISD}
+
+Los computadores \textbf{MISD} forman una clase de computadores cuyo comportamiento se puede implementear con iguales prestaciones que en un computador MIMD en el que sus procesadores se sincronizan para que los datos vayan pasando desde un procesador a otro. Por tanto, si bien existen computadores SISD (monoprocesador), SIMD (procesadores matriciales y vectoriales) y MIMD (multiprocesadores y multicomputadores), los computadores MISD específicos no existen, ya que su forma de procesamiento se puede implementar en un MIMD.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{misd.png}
+\caption{Arquitectura MISD}
+\end{figure}
+
+La taxonomía de Flynn pone de manifiesto dos tipos de paralelismo que pueden utilizarse: paralelismo de \emph{datos} y paralelismo de \emph{instrucciones}. El de \emph{datos} ese explota cuando una misma función, instrucción, etc. se ejecuta repetidas veces en paralelo con diferentes datos. Se explota fundamentalmente en las arquitecturas \textbf{MIMD}.\\
+El paralelismo \emph{funcional} se aprovecha cuando las funciones, bloques, instrucciones, etc. (iguales o distintas) que intervienen en la aplicación se ejecutan en paralelo. 
+
+\subsection{Espacio de diseño. Clasificación y estructura general}
+\subsubsection{Clasificación}
+Los sistemas de paralelismo de alto nivel se han clasificado en dos grupos en función de la organización de su espacio de direcciones:
+\begin{enumerate}
+\item \textbf{Sistemas con memoria compartida} (SM, \textit{Shared Memory}) o simplemente \textbf{multiprocesadores}. Son sistemas en los que todos los procesadores comparten el mismo espacio de direcciones. El programador no necesita saber dónde están almacenados los datos.
+\item \textbf{Sistemas con memoria distribuida} (DM, \textit{Distributed Memory}) o \textbf{multicomputadores} . Cada procesador tiene su propio espacio de direcciones. El programador necesita saber dónde están almacenados los datos.
+\end{enumerate}
+
+En un procesador SMP (\textit{Symmetric MultiProcessor}) el tiempo de acceso de los procesadores a memoria o dispositivos de E/S será igual sea cual sea la posición a la que accedan. En estos procesadores , el acceso a memoria se realiza a través de la red de interconexión.\\
+En los multicomputadores, cada procesador tiene su propio módulo de memoria local al que puede acceder directamente. En esta configuración la red de interconexión se utiliza para transferir mensajes entre nodos de la red. \\
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|m{3cm}|m{6cm}|m{6cm}|}
+\hline
+\textbf{Atributo} & 
+\begin{center}
+\textbf{Multiprocesador SMP} 
+\\
+\includegraphics[scale=0.2]{multiprocesador_smp.png} 
+\end{center}
+& 
+\begin{center}
+\textbf{Multicomputador} 
+\\
+\includegraphics[scale=0.2]{multicomputador.png} 
+\end{center}
+\\
+\hline
+Espacio de direcciones & Compartido por todos los procesadores & Cada procesador tiene el suyo \\
+\hline
+Programador & NO necesita saber dónde están almacenados los datos & Necesita saber dónde están almacenados los datos \\
+\hline
+Latencia en el acceso a memoria & Grande & Pequeña \\
+\hline
+Comunicación & Implícita mediante variables compartidas. Datos no duplicados & Explícita mediante
+software para paso de mensajes. Datos duplicados. \\
+\hline
+Sincronización & Necesita implantar primitivas & Mediante software de comunicación \\
+\hline
+Distribución de código y datos entre procesadores & No necesaria & Necesaria \\
+\hline
+Programación & Sencilla & Complicada \\
+\hline
+\end{tabular}
+\caption{Diferencias entre multicomputadores y multiprocesadores}
+\end{table}
+\paragraph{Incremento de escalabilidad en multiprocesadores y red de interconexión}
+Se han seguido varios caminos para lograrlo:
+\begin{enumerate}
+\item Incorporar cachés para que cada procesador disponga de una caché local, reducciendo el número de accesos a memoria.
+\newpage
+\item Usar redes con menor latencia y mayor ancho de banda que un bus.
+\begin{enumerate}
+\item Jerarquía de buses.
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{jerarquia_buses.jpg}
+	\caption{Jerarquía de buses}
+	\end{figure}
+\item Multietapa
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{multietapa.png}
+	\caption{Multietapa}
+	\end{figure}
+\item Barras cruzadas. Proporciona el mejor rendimiento.
+	\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.5]{barras_cruzadas.png}
+	\caption{Barras cruzadas}
+	\end{figure}
+\end{enumerate}
+\item Distribuir físicamente los módulos de memoria principal entre los procesadores manteniendo el espacio de direcciones compartido. Se pierde la propiedad de la simetría.
+
+\end{enumerate}
+
+A raíz de la aparición de multiprocesadores con memoria físicamente distribuida surgieron nuevas denominaciones para sistemas con múltiples procesadores. Entonces los multiprocesadores se empezaron a clasificar según la uniformidad en el acceso a memoria:
+\begin{enumerate}
+\item \textbf{Multiprocesadores con acceso a memoria uniforme} o UMA (\textit{Uniform Memory Access}). El tiempo de acceso de los procesadores a una determinada posición de memoria principal (o caché) es igual sea cual sea el procesador (SMP).
+\item \textbf{Multiprocesadores con acceso a memoria no uniforme} o NUMA (\textit{Non-Uniform Memory Access}). El tiempo de acceso depende del procesador.
+\begin{enumerate}
+\item \textbf{NCC-NUMA} (\textit{Non-Cache-Coherent Non-Uniform Memory Access}) o arquitecturas con acceso a memoria no uniforme sin coherencia de caché entre nodos o, simplemente, \textbf{NUMA}. En estas arquitecturas no hay hardware para evitar incoherencias entre cachés de distintos nodos. Esto hace que los datos modificables compartidos no se pueden trasladar a caché de nodos remotos, hay que acceder individualmente a ellos a través de la red.
+\item \textbf{CC-NUMA} (\textit{Cache-Coherent Non-Uniform Memory Access}) o arquitecturas con acceso a memoria no uniforme y caché coherente. Tienen hardware para mantener la coherencia de caché, pero introduce un retardo que hace que la arquitectura escale en menor grado que un NUMA.
+\item \textbf{COMA} (\textit{Cache Only Memory Access}) o arquitecturas con acceso a memoria solo caché. La memoria local se gestiona como caché e incluye un hardware de mantenimiento. El coste y el retardo de estos sistemas es mayor que en CC-Numa, por lo que no existe actualmente ningún sistema comercial COMA.
+\end{enumerate}
+\end{enumerate}
+\subsubsection{Propuesta de clasificación de arquitecturas con múltiples threads}
+\begin{itemize}
+\item \textbf{TLP} (\textit{Thread Level Parallelism}). Múltiples flujos de control concurrentemente o en paralelo.
+\begin{itemize}
+\item \textbf{Implícito}. Flujos de control creados y gestionados por la arquitectura.
+\item \textbf{Explícito}. Flujos de control creados y gestionados por el Sistema Operativo.
+\begin{itemize}
+\item \textbf{Con una instancia SO}. Multiprocesadores, multicores y cores multithread.
+\item \textbf{Con múltiples instancias SO}. Multicomputadores.
+\end{itemize}
+\end{itemize}
+\end{itemize}
+
+\end{document}
