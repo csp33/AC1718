@@ -1,6 +1,7 @@
 \documentclass[12pt,spanish]{article}
 \usepackage[spanish]{babel}
 \usepackage{graphicx}
+\usepackage{amsmath}
 \usepackage{multirow}
 \usepackage{hyperref}
 \usepackage{caption}
@@ -9,9 +10,10 @@
 \usepackage[outputdir=build]{minted}
 \usepackage{float}
 \usepackage{titling}
+\usepackage{soul}
 \usepackage{listings}
 \usepackage{array}
-\graphicspath{ {./img/} {../../LaTeX/img/} {/home/csp98/latex/img/}}
+\graphicspath{ {./img/} {../../LaTeX/img/}}
 \selectlanguage{spanish}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
@@ -20,13 +22,23 @@
 \newtheorem*{definition}{Definición}
 \newtheorem*{aclaration}{Aclaración}
 \newtheorem{law}{Ley}
-
-\makeindex
+\newenvironment{solution}{
+	\par
+	\textbf{Solución}
+	\par
+	\begin{center}
+}
+{
+	\end{center}
+}
 
 \title{Arquitectura de Computadores}
 \setlength{\droptitle}{10em}
 \author{Carlos Sánchez Páez}
+
+\makeindex
 \begin{document}
+
 \begin{titlepage}
 
 \newlength{\centeroffset}
@@ -455,13 +467,23 @@ Vienen determinados por la siguiente fórmula:
 MIPS=\frac{NI}{T_{CPU} \cdot 10^6}=\frac{f}{CPI \cdot 10^6}
 \end{equation}
 Como podemos ver, esta medida puede variar según el programa, por lo que no sirve como medida característica de una máquina. Además, depende del repertorio de instrucciones, por lo que no permite comparar máquinas con repertorios distintos. Por último, puede ser inversamente proporcional a las prestaciones, ya que aquel programa que utilice más instrucciones tendrá más MIPS, indicando erróneamente que es mejor.
+\subparagraph{\boldmath $MIPS_{pico}$}
+Es el máximo valor téórico de MIPS para una arquitectura. Se calcula mediante la siguiente fórmula:
+\begin{equation}
+MIPS_{pico}=\frac{f \cdot IPC_{max}}{10^6}
+\end{equation}
+donde $IPC_{max}$ representa el número máximo de operaciones por ciclo que puede realizar la arquitectura.
 \paragraph{MFLOPS (Millions of FLoating point Operations Per Second)}
 Vienen definidos por:
 \begin{equation}
 MFLOPS=\frac{Operaciones_{coma flotante}}{T_{CPU} \cdot 10^6}
 \end{equation}
 Por un lado no es una medida adecuada para todos los programas, ya que solo tiene en cuenta las operaciones en coma flotante. Además, el conjunto de operaciones en coma flotante no es el mismo en todas las máquinas, así como el coste por operación. Para resolver este último problema, se utilizan a veces los MFLOPS normalizados, que se obtienen dando un peso relativo a cada instrucción.
-
+\subparagraph{\boldmath $MFLOPS_{pico}$}
+Se calculan mediante la siguiente expresión:
+\begin{equation}
+MFLOPS_{pico}=\frac{f \cdot \text{Operaciones en coma flotante/ciclo}_{max}}{10^6}
+\end{equation}
 \subsubsection{Conjuntos de programas de prueba (\textit{benchmarks})}
 
 Para evaluar una arquitectura hay que considerar tanto las medidas de prestaciones que caracterizan a la arquitectura como las medidas de prestaciones que permiten comparar arquitecturas con \emph{igual uso}.\\
@@ -492,9 +514,113 @@ Surge la cuestión de hasta qué punto la mejora en un factor \emph{p} se pone d
 La mejora de velocidad, $S_p$ que se puede obtener al mejorar un recurso de una máquina en un factor $p$ está limitada por la expresión:
 \[ S_p \leq \frac{p}{1 + f \cdot (p-1)} \]
 \end{law}
-donde $f$ es el porcentaje de operaciones que realiza la máquina en las que no se pone de manifiesto la mejora. Así, solo si $f=0$ (la mejora se utiliza siempre) una mejora de factor $p$ en un elemento se observa n la misma medida en la máquina.
+donde $f$ es el porcentaje de operaciones que realiza la máquina en las que no se pone de manifiesto la mejora (por supuesto, $0 \leq f \leq 1$). Así, solo si $f=0$ (la mejora se utiliza siempre) una mejora de factor $p$ en un elemento se observa n la misma medida en la máquina.
 \subparagraph{Ejemplo}
 Si un programa pasa un $25\%$ del tiempo de ejecución realizando operaciones de coma flotante y mejoramos la máquina haciendo que esas instrucciones se ejecuten en la mitad de tiempo ($p=2$);
 \[ S_p \leq \frac{2}{1 + 0.75 \cdot (2-1)} \leq \frac{2}{1.75} \leq 1.14\]
 Es decir, la mejora en la arquitectura completa será de sólo un $14\%$.
+\subsection{Ejercicios}
+\begin{enumerate}
+\item Calcule los $MIPS_{pico}$ de una arquitectura con una CPU superescalar con un IPC de 3 instrucciones por ciclo y una frecuencia de 2Ghz.
+\begin{solution}
+\[ MIPS_{pico}=\frac{2 \cdot 10^9 ciclos/seg \cdot 3 instrucciones/ciclo}{10^6}=6 \cdot 10^3 \ MIPS \simeq 6 \ GIPS \]
+\end{solution}
+\item En el  código de  prueba  (benchmark) que  ejecuta un procesador  no  segmentado  que  funciona a 300  MHz,  hay  un  20\%  de  instrucciones  LOAD  que  necesitan  4  ciclos,  un  10\%  de  instrucciones  STORE  que necesitan  3  ciclos,  un  25\%  de  instrucciones  con  operaciones  de  enteros  que  necesitan  6  ciclos,  un  15\%  de instrucciones  con  operandos  en  coma  flotante  que  necesitan  8  ciclos  por  instrucción,  y  un  30\%  de instrucciones de salto que necesitan 3 ciclos. 
+\begin{enumerate}
+\item ¿Cuál es la ganancia que se puede obtener por reducción a 3 ciclos de las instrucciones con enteros?
+\item ¿Cuál es la ganancia que se puede obtener por reducción a 3 ciclos de las instrucciones en coma flotante?
+\end{enumerate}
+\begin{solution}
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Instrucción} & \textbf{Porcentaje de uso} & \textbf{CPI} \\
+\hline
+LOAD & 20\% & 4 \\
+\hline
+STORE & 10\% & 3 \\
+\hline
+Operaciones con enteros & 25\% & 6 \\
+\hline
+Operaciones en coma flotante & 15\% & 8 \\
+\hline
+Salto & 30\% & 3 \\
+\hline
+\end{tabular}
+\par
+\bigskip
+Antes de la optimización
+\end{table}
+\newpage
+\begin{itemize}
+\item Apartado a)
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Instrucción} & \textbf{Porcentaje de uso} & \textbf{CPI} \\
+\hline
+LOAD & 20\% & 4 \\
+\hline
+STORE & 10\% & 3 \\
+\hline
+Operaciones con enteros & 25\% & \textst{6} 3 \\
+\hline
+Operaciones en coma flotante & 15\% & 8 \\
+\hline
+Salto & 30\% & 3 \\
+\hline
+\end{tabular}
+\par
+\bigskip
+Tras la optimización
+\end{table}
+Como el CPI de las operaciones con enteros se reduce a la mitad, $p=2$.\\
+Aplicamos la ley de Amdahl:
+\[ S_p=\frac{p}{1 + f \cdot (p-1)} \rightarrow S_p = \frac{2}{1 + 0.75 \cdot (2-1)}= \frac{2}{1.75} \simeq  1.143 \]
+\begin{center}
+Por tanto la mejora será de aproximadamente el $14,3\%$
+\end{center}
+\item Apartado b)
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Instrucción} & \textbf{Porcentaje de uso} & \textbf{CPI} \\
+\hline
+LOAD & 20\% & 4 \\
+\hline
+STORE & 10\% & 3 \\
+\hline
+Operaciones con enteros & 25\% & 6 \\
+\hline
+Operaciones en coma flotante & 15\% & \textst{8} 3 \\
+\hline
+Salto & 30\% & 3 \\
+\hline
+\end{tabular}
+\par
+\bigskip
+Tras la optimización
+\end{table}
+Como el CPI de las operaciones en coma flotante pasa de 8 a 3, $p=\frac{8}{3}=2.67$.
+Aplicamos la Ley de Amdahl
+
+\end{itemize}
+
+\end{solution}
+
+
+
+
+
+
+
+
+
+\end{enumerate}
+
+
 \end{document}
