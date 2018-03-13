@@ -19,6 +19,8 @@
 \renewcommand\listoflistingscaption{Códigos fuente}
 \newtheorem*{definition}{Definición}
 \newtheorem*{aclaration}{Aclaración}
+\newtheorem{law}{Ley}
+
 \makeindex
 
 \title{Arquitectura de Computadores}
@@ -402,5 +404,97 @@ A raíz de la aparición de multiprocesadores con memoria físicamente distribui
 \end{itemize}
 \end{itemize}
 \end{itemize}
+\subsection{Evolución y prestaciones de las arquitecturas}
+\subsubsection{Tiempo de CPU de un programa}
+Para ilustrar el proceso de evolución de las arquitecturas se utiliza una expresión que relaciona el tiempo de CPU de un programa con tres características a través de las cuales podemos extraer consecuencias importantes relacionadas con la influencia de la tecnología, el compilador y la arquitectura en las prestaciones:
+\begin{equation}
+T_{tarea}=NI \cdot CPI \cdot T_{ciclo}=NI \cdot \frac{CPI}{f}
+\end{equation}
+\[
+T_{ciclo}=\frac{1}{f}
+\]
+donde $T_{tarea}$ es el tiempo de CPU de un programa (también se puede notar como $T_{CPU}$), $NI$ es el número de instrucciones mñaquina del programa, $CPI$ es el número medio de ciclos por instrucción y $T_{ciclo}$ el período de reloj del procesador (inverso de la frecuencia, $f$). EL valor de CPI se puede expresar como:
+\newpage
+\begin{equation}
+CPI=\frac{Ciclos_{programa}}{NI}=\frac{\sum_{i=1}^{n} CPI_{i} \cdot I_i}{NI}
+\end{equation}
+\[
+Ciclos_{programa}=\sum_{i}^{n}CPI_i \cdot I_i
+\]
+donde $CPI_{i}$ es el número medio de ciclos de las instrucciones de tipo $i$ y $NI_{i}$ es el número de instrucciones de ese tipo.\\
+Uno de los objetivos fundamentales en el diseño de un computador es reducir el tiempo de ejecución de los programas ($T_{tarea}$).\\
+La ecuación (1) puede ayudarnos a comprender, por ejemplo, la diferencia entre RISC y CISC:
+\begin{itemize}
+\item En \textbf{CISC} se opta por reducir el $NI$ para reducir $T_{CPU}$, aunque aumenta el $CPI_i$. Sin embargo, este aumento se puede contrarrestar mejorando la frecuencia del procesador ($f$).
+\item En \textbf{RISC} se opta por reducir el $CPI_i$ y aumentar el $NI_i$. Al igual que en el caso anterior, el aumento de $NI_i$ se puede contrarrestar mejorando $f$.
+\end{itemize}
+Hay procesadores que pueden emitir (mandar a ejecutar) varias instrucciones al mismo tiempo. En ese caso:
+\[\frac{CPE}{IPE}=CPI\] 	
+\begin{equation}
+T_{CPU}=NI \cdot \frac{CPE}{IPE} \cdot T_{ciclo}
+\end{equation}
+donde $CPE$ es el número mínimo de ciclos transcurridos entre los instantes en los que el procesador puede emitir instrucciones y $IPE$ es el número de instrucciones que pueden emitirse en un instante.\\
+También hay procesadores que pueden codificar varias operaciones en una instrucción:
+\[NI=\frac{N_{operaciones}}{Operaciones_{instruccion}}\]
+\begin{equation}
+T_{CPU}=\frac{N_{operaciones}}{Operaciones_{instruccion}} \cdot CPI \cdot T_{ciclo}
+\end{equation}
+donde $N_{operaciones}$ es el número de operaciones que realiza el programa y $Operaciones_{instruccion}$ el número de operaciones que puede codificar una instrucción.
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.25]{optimizacion_t_cpu.png}
+\caption{Optimizaciones del tiempo de CPU y sus causantes}
+\end{figure}
+\subsubsection{Medidas de productividad: MIPS y MFLOPS}
+El tiempo de respuesta, la productividad y la funcionalidad se pueden englobar en una única medida de prestaciones, conocida como \emph{tiempo de respuesta para una entrada compleja}. Corresponde a una secuencia representativa de entradas elementales del sistema. En esta línea están los \emph{MIPS} y los \emph{MFLOPS}.
+\paragraph{MIPS (Millions of Instructions Per Second)}
+Vienen determinados por la siguiente fórmula:
+\[T_{CPU}=NI \cdot CPI \cdot T_{ciclo} \]
+\[f=\frac{1}{T_{ciclo}} \]
+\begin{equation}
+MIPS=\frac{NI}{T_{CPU} \cdot 10^6}=\frac{f}{CPI \cdot 10^6}
+\end{equation}
+Como podemos ver, esta medida puede variar según el programa, por lo que no sirve como medida característica de una máquina. Además, depende del repertorio de instrucciones, por lo que no permite comparar máquinas con repertorios distintos. Por último, puede ser inversamente proporcional a las prestaciones, ya que aquel programa que utilice más instrucciones tendrá más MIPS, indicando erróneamente que es mejor.
+\paragraph{MFLOPS (Millions of FLoating point Operations Per Second)}
+Vienen definidos por:
+\begin{equation}
+MFLOPS=\frac{Operaciones_{coma flotante}}{T_{CPU} \cdot 10^6}
+\end{equation}
+Por un lado no es una medida adecuada para todos los programas, ya que solo tiene en cuenta las operaciones en coma flotante. Además, el conjunto de operaciones en coma flotante no es el mismo en todas las máquinas, así como el coste por operación. Para resolver este último problema, se utilizan a veces los MFLOPS normalizados, que se obtienen dando un peso relativo a cada instrucción.
 
+\subsubsection{Conjuntos de programas de prueba (\textit{benchmarks})}
+
+Para evaluar una arquitectura hay que considerar tanto las medidas de prestaciones que caracterizan a la arquitectura como las medidas de prestaciones que permiten comparar arquitecturas con \emph{igual uso}.\\
+Para ello, se definen conjuntos de programas de prueba (\textit{benchmarks}) representativos de todos los posinlrd programas, representando la carga de trabajo usual en la máquina que los ejecutará. Hay de varios tipos:
+\begin{enumerate}
+\item \textbf{Aplicaciones reales}. Presentan problemas en cuanto a la portabilidad. Ejemplos: SPEC CPU2006
+\item \textbf{Núcleos o \textit{kernels}}. Programas que evalúan una característica concreta. Resolución de sistemas de ecuaciones, multiplicación de matrices, etc.
+\item \textbf{Programas de pruebas simples (\textit{toys})}. Son pequeños y fáciles de escribir. Test ping-pong, evaluación de operaciones con enteros y flotantes, etc.
+\item \textbf{Programas sintéticos}. Dhrystone, Whetstone, etc. No realizan ninguna tarea concreta.
+\item \textbf{Aplicaciones diseñadas}. Predicción del tiempo, simulación de terremotos, etc.
+\subsubsection{Ganancia en prestaciones}
+Si incrementamos las prestaciones de un computador mejorando alguno de sus recursos o elementos, podremos utilizar la \emph{ganancia} para evaluar hasta qué punto una mejora de prestaciones es \textit{p} veces mayor o menor que antes.\\
+Este aumento de prestaciones se expresa mediante la ganancia de velocidad ($S_p$, \textit{Speed Up})
+\begin{equation}
+S_p=\frac{T_1}{T_p}=\frac{V_p}{V_1}
+\end{equation}
+donde:
+\begin{itemize}
+\item $V_1$ es la velocidad de la máquina base.
+\item $V_p$ es la velocidad de la máquina mejorada.
+\item $T_1$ es el tiempo de ejecución en la máquina base.
+\item $T_p$ es el tiempo de ejecución en la máquina mejorada.
+\end{itemize}
+\end{enumerate}
+
+Surge la cuestión de hasta qué punto la mejora en un factor \emph{p} se pone de manifiesto en la mejora final objetiva, surgiendo así la \textbf{Ley de Amdahl}.
+\begin{law}[de Amdahl]
+La mejora de velocidad, $S_p$ que se puede obtener al mejorar un recurso de una máquina en un factor $p$ está limitada por la expresión:
+\[ S_p \leq \frac{p}{1 + f \cdot (p-1)} \]
+\end{law}
+donde $f$ es el porcentaje de operaciones que realiza la máquina en las que no se pone de manifiesto la mejora. Así, solo si $f=0$ (la mejora se utiliza siempre) una mejora de factor $p$ en un elemento se observa n la misma medida en la máquina.
+\subparagraph{Ejemplo}
+Si un programa pasa un $25\%$ del tiempo de ejecución realizando operaciones de coma flotante y mejoramos la máquina haciendo que esas instrucciones se ejecuten en la mitad de tiempo ($p=2$);
+\[ S_p \leq \frac{2}{1 + 0.75 \cdot (2-1)} \leq \frac{2}{1.75} \leq 1.14\]
+Es decir, la mejora en la arquitectura completa será de sólo un $14\%$.
 \end{document}

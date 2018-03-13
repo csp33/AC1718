@@ -1,0 +1,15 @@
+\select@language {spanish}
+\select@language {spanish}
+\contentsline {figure}{\numberline {1}{\ignorespaces Niveles de paralelismo y granularidad\relax }}{4}{figure.caption.7}
+\contentsline {figure}{\numberline {2}{\ignorespaces Paralelismo de tareas\relax }}{5}{figure.caption.9}
+\contentsline {figure}{\numberline {3}{\ignorespaces Paralelismo impl\IeC {\'\i }cito, expl\IeC {\'\i }cito y arquitecturas paralelas\relax }}{7}{figure.caption.11}
+\contentsline {figure}{\numberline {4}{\ignorespaces Detecci\IeC {\'o}n, utilizaci\IeC {\'o}n, implementaci\IeC {\'o}n y extracci\IeC {\'o}n del paralelismo\relax }}{8}{figure.caption.12}
+\contentsline {figure}{\numberline {5}{\ignorespaces Taxonom\IeC {\'\i }a de Flynn\relax }}{9}{figure.caption.13}
+\contentsline {figure}{\numberline {6}{\ignorespaces Arquitectura SISD\relax }}{10}{figure.caption.15}
+\contentsline {figure}{\numberline {7}{\ignorespaces Arquitectura SIMD\relax }}{10}{figure.caption.17}
+\contentsline {figure}{\numberline {8}{\ignorespaces Arquitectura MIMD\relax }}{10}{figure.caption.19}
+\contentsline {figure}{\numberline {9}{\ignorespaces Arquitectura MISD\relax }}{11}{figure.caption.21}
+\contentsline {figure}{\numberline {10}{\ignorespaces Jerarqu\IeC {\'\i }a de buses\relax }}{13}{figure.caption.24}
+\contentsline {figure}{\numberline {11}{\ignorespaces Multietapa\relax }}{13}{figure.caption.25}
+\contentsline {figure}{\numberline {12}{\ignorespaces Barras cruzadas\relax }}{13}{figure.caption.26}
+\contentsline {figure}{\numberline {13}{\ignorespaces Optimizaciones del tiempo de CPU y sus causantes\relax }}{15}{figure.caption.27}
