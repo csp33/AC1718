@@ -39,6 +39,7 @@
 \makeindex
 \begin{document}
 
+
 \begin{titlepage}
 
 \newlength{\centeroffset}
@@ -607,20 +608,69 @@ Tras la optimización
 \end{table}
 Como el CPI de las operaciones en coma flotante pasa de 8 a 3, $p=\frac{8}{3}=2.67$.
 Aplicamos la Ley de Amdahl
+\[S_p=\frac{p}{1 + f \cdot (p-1)} \rightarrow S_p=\frac{2.67}{1 + 0.85 \cdot (2.67-1)=\frac{2,67}{1.4195} \simeq 1.88}
+\]
+Por tanto, la mejora es aproximadamente del $88\%$
 
 \end{itemize}
 
 \end{solution}
-
-
-
-
-
-
-
-
-
+\item En  un  procesador  sin  segmentación  de  cauce,  determine  cuál  de  estas  dos  alternativas  para realizar un salto condicionales mejor:
+\begin{enumerate}
+\item Una instrucción COMPARE actualiza un código de condición y es seguida por una instrucción BRANCH que comprueba esa condición.Se usan dos intrucciones.
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Instrucción} & \textbf{NI} & \textbf{CPI} \\
+\hline
+COMPARE & $0.2NI_1$ & 4 \\
+\hline
+Resto & $0.8NI_1$ & 3 \\
+\hline
+& $NI_1$ & \\
+\hline
+\end{tabular}
+\end{table}
+\item Una sola instrucción incluye la funcionalidad de las instrucciones COMPARE y BRANCH.Se usa una única instrucción.
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Instrucción} & \textbf{NI} & \textbf{CPI} \\
+\hline
+COMPARE + BRANCH & $0.2NI_1$ & 4 \\
+\hline
+Resto & $0.8NI_1-0.2NI_1=0.6NI_1$ & 3 \\
+\hline
+& $0.8NI_1$ & \\
+\hline
+\end{tabular}
+\end{table}
 \end{enumerate}
+Hay que tener en cuenta que hay un 20\% de instrucciones BRANCH para a) en el conjunto de programas de prueba; que las instrucciones BRANCH en a) y COMPARE+BRANCH en b) necesitan 4  ciclos mientras que todas las demás necesitan sólo 3; y que el ciclo de reloj de la a) es un 25\% menor que el de la b), dado que en  éste caso la mayor funcionalidad de la instrucción COMPARE+BRANCH ocasiona una mayor complejidad en el procesado.
+\begin{solution}
+\textbf{Considero que en el apartado a) la instrucción BRANCH entra en el resto, por lo que consume 3 CPI.}\\
+Sabemos que $T_{ciclo1}=0.75 \cdot T_{ciclo2} \rightarrow T_{ciclo2}=1.33 \cdot T_{ciclo1}$
+Ahora calculamos los $T_{CPU}$. Para ello, comenzamos por los $CPI_i$
+\begin{itemize}
+\item $CPI_1=\frac{0.2\cdot NI_1}{NI_1} \cdot 4 + \frac{0.8 \cdot NI_1}{NI_1} \cdot 3 = 3.2$ 
+\item $T_{CPU1}=NI_1 \cdot CPI_1 \cdot T_{ciclo1}= 3.2 \cdot NI_1 \cdot T_{ciclo1}$
+\item $CPI_2=\frac{0.2\cdot NI_1}{0.8 \cdot NI_1} \cdot 4 + \frac{0.6 \cdot NI_1}{0.8 \cdot NI_1} \cdot 3 = 3.25$ 
+\item $T_{CPU2}=0.8 \cdot NI_1 \cdot 3.25 \cdot 1.33 \cdot T_{ciclo1}= 3.45 \cdot NI_1 \cdot T_{ciclo1}$
+\end{itemize}
+Como $T_{CPU1} < T_{CPU2} $, la mejor opción es la \textbf{a)}.
+
+\end{solution}
+\item ¿Qué ocurriría en el ejercicio anterior si el ciclo de reloj fuese únicamente un 10\% mayor para b) ?
+\begin{solution}
+El problema nos indica que $T_{ciclo2}=1.1T_{ciclo1}$
+\[T_{CPU1}=3.2 \cdot NI_1 \cdot T_{ciclo1}\]
+\[T_{CPU2}=(0.8 \cdot 3.25 \cdot 1.1)NI_1 \cdot T_{ciclo1}=2.86 \cdot NI_1 \cdot T_{ciclo1}\]
+En este caso, $T_{ciclo2} < T_{ciclo1}$, por lo que la opción \textbf{b)} se convierte en la mejor.
+\end{solution}
+\end{enumerate}
+
 
 
 \end{document}
