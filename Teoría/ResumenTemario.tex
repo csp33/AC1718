@@ -2,6 +2,7 @@
 \usepackage[spanish]{babel}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{adjustbox}
 \usepackage{multirow}
 \usepackage{hyperref}
 \usepackage{caption}
@@ -668,6 +669,123 @@ El problema nos indica que $T_{ciclo2}=1.1T_{ciclo1}$
 \[T_{CPU1}=3.2 \cdot NI_1 \cdot T_{ciclo1}\]
 \[T_{CPU2}=(0.8 \cdot 3.25 \cdot 1.1)NI_1 \cdot T_{ciclo1}=2.86 \cdot NI_1 \cdot T_{ciclo1}\]
 En este caso, $T_{ciclo2} < T_{ciclo1}$, por lo que la opción \textbf{b)} se convierte en la mejor.
+\end{solution}
+\item Considere un procesador no segmentado con una arquitectura de tipo LOAD/STORE en la que las operaciones   sólo   utilizan   como   operandos   registros   de   la   CPU.   Paraun   conjunto   de   programas representativos de su actividad se tiene que el 43\% de las instrucciones son operaciones con la ALU (3 CPI), el 21\% LOADs (4 CPI), el 12\% STOREs (4 CPI) y el 24\% BRANCHs (4 CPI).Se ha podido comprobar que un 25\% de las operaciones con la ALU utilizan operandos en registros que no se vuelven  a  utilizar. Compruebe  si  mejorarían  las  prestaciones si,  para  sustituir  ese  25\%  de  operaciones,se añaden instrucciones con un dato en un registro y otro en memoria. Tengan en cuenta en la comprobación que para estas nuevas instrucciones el valor de CPI es 4 y que añadirlas ocasiona un incremento de un ciclo en el CPI de los BRANCHs, pero no afectan al ciclo de reloj.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Instrucción} & \textbf{NI} & \textbf{CPI} \\
+\hline
+ALU (R-R) & $0.43NI_1$ & 3 \\
+\hline
+LOAD & $0.21NI_1$ & 4 \\
+\hline
+STORE & $0.12NI_1$ & 4 \\
+\hline
+BRANCH & $0.24NI_1$ & 4 \\
+\hline
+& $NI_1$ & \\
+\hline
+\end{tabular}
+\caption*{Antes de la mejora}
+\end{table}
+\begin{solution}
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Instrucción} & \textbf{NI} & \textbf{CPI} \\
+\hline
+ALU (R-R) & $0.75 \cdot 0.43NI_1=0.3225NI_1$ & 3 \\
+\hline
+ALU (R-M) & $0.25 \cdot 0.43NI_1=0.1075NI_1$ & 4 \\
+\hline
+LOAD & $0.21NI_1 - 0.25 \cdot 0.43NI_1=0.1025NI_1$ & 4 \\
+\hline
+STORE & $0.12NI_1$ & 4 \\
+\hline
+BRANCH & $0.24NI_1$ & \textst{4} 5 \\
+\hline
+& $0.8925NI_1$ & \\
+\hline
+\end{tabular}
+\caption*{Tras la mejora}
+\end{table}
+Calulamos el tiempo de CPU de ambas situaciones:
+\[CPI_1=\frac{0.43NI_1}{NI_1}\cdot 3 + \frac{0.21NI_1}{NI_1} \cdot 4 + \frac{0.12NI_1}{NI_1} \cdot 4 + \frac{0.24NI_1}{NI_1} \cdot 4 = 3.57\]
+\[T_{CPU1}=CPI_1 \cdot NI_1 \cdot T_{ciclo1}= 3.57NI_1 \cdot T_{ciclo1} \]
+
+\[CPI_2=\frac{0.3225NI_1}{0.8925NI_1}\cdot 3 + \frac{0.1075NI_1}{0.8925NI_1} \cdot 4 + \frac{0.21NI_1}{0.8925NI_1} \cdot 4 + \frac{0.12NI_1}{0.8925NI_1} \cdot 4 + \frac{0.24NI_1}{0.8925NI_1} \cdot 4 = 3.91\]
+\[T_{CPU2}=3.91 \cdot 0.8925NI_1 \cdot T_{ciclo2}= 3.49NI_1 \cdot T_{ciclo1} \]
+Como $T_{CPU2}<T_{CPU1}$; la mejora \textbf{es efectiva}.
+\end{solution}
+\newpage
+\item Se  ha  diseñado un compilador para la máquina LOAD/STORE del problema anterior. Ese compilador puede reducir en un 50\% el número de operaciones con la ALU, pero no reduce el número de LOADs, STOREs y BRANCHs. Suponiendo que la  frecuencia de reloj es de 50 Mhz. ¿Cuál es el número de MIPS y el tiempo de   ejecución que se consigue con el código optimizado? Compárelos con los correspondientes del código no optimizado.
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Instrucción} & \textbf{NI} & \textbf{CPI} \\
+\hline
+ALU (R-R) & $0.43NI_1$ & 3 \\
+\hline
+LOAD & $0.21NI_1$ & 4 \\
+\hline
+STORE & $0.12NI_1$ & 4 \\
+\hline
+BRANCH & $0.24NI_1$ & 4 \\
+\hline
+& $NI_1$ & \\
+\hline
+\end{tabular}
+\caption*{Antes de la mejora}
+\end{table}
+\begin{solution}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Instrucción} & \textbf{NI} & \textbf{CPI} \\
+\hline
+ALU (R-R) & $\frac{0.43NI_1}{2}$ & 3 \\
+\hline
+LOAD & $0.21NI_1$ & 4 \\
+\hline
+STORE & $0.12NI_1$ & 4 \\
+\hline
+BRANCH & $0.24NI_1$ & 4 \\
+\hline
+& $0.785NI_1$ & \\
+\hline
+\end{tabular}
+\caption*{Tras la mejora}
+\end{table}
+
+Comenzamos calculando el Tiempo de CPU
+\[
+CPI_1=\frac{0.43NI_1}{NI_1}\cdot 3 + \frac{0.21NI_1}{NI_1}\cdot 4 + \frac{0.12NI_1}{NI_1}\cdot 4 + \frac{0.24NI_1}{NI_1}\cdot 4 =3.57
+\]
+\[
+CPI_2=\frac{\frac{0.43NI_1}{2}}{0.785NI_1}\cdot 3 + \frac{0.21NI_1}{0.785NI_1}\cdot 4 + \frac{0.12NI_1}{0.785NI_1}\cdot 4 + \frac{0.24NI_1}{0.785NI_1}\cdot 4 =3.726
+\]
+\[T_{CPU1}=NI_1 \cdot T_{ciclo} \cdot CPI_1=3.57 \cdot NI_1 \cdot T_{ciclo}
+\]
+\[T_{CPU2}=0.785NI_1  \cdot CPI_2 \cdot T_{ciclo}=0.785NI_1 \cdot 3.726 \cdot T_{ciclo}=2.925 \cdot T_{ciclo}
+\]
+Ahora, calculamos MIPS
+\begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
+$MIPS_1=\frac{NI_1}{T_{CPU1} \cdot 10^6}=\frac{NI_1}{NI_1 \cdot CPI_1 \cdot T_{ciclo} \cdot 10^6}=\frac{f}{CPI_1 \cdot 10^6}=\frac{50 ciclos/segundo \cdot 10^6}{3.57 ciclos/instruccion \cdot 10^6}=14.005 MIPS
+$
+\end{adjustbox}
+\begin{adjustbox}{width=\textwidth,totalheight=\textheight,keepaspectratio}
+$MIPS_2=\frac{0.785NI_1}{T_{CPU2} \cdot 10^6}=\frac{NI_1}{0.785NI_1 \cdot CPI_2 \cdot T_{ciclo} \cdot 10^6}=\frac{f}{CPI_2 \cdot 10^6}=\frac{50 ciclos/segundo \cdot 10^6}{3.726 ciclos/instruccion \cdot 10^6}=13.42 MIPS
+$
+\end{adjustbox}
+\par
+La configuración 2 tiene un tiempo de CPU \textbf{mejor}. Sin embargo, si miramos la productividad, vemos como es \textbf{peor}. Esto se debe a que el sistema es más rápido, pero menos productivo, ya que la mejora se ha implementado en la parte que menos se usa.
 \end{solution}
 \end{enumerate}
 
