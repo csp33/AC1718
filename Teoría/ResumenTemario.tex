@@ -4,7 +4,7 @@
 \usepackage{amsmath}
 \usepackage{adjustbox}
 \usepackage{multirow}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{caption}
 \usepackage{amsthm}
 \usepackage{multicol}
@@ -609,7 +609,7 @@ Tras la optimización
 \end{table}
 Como el CPI de las operaciones en coma flotante pasa de 8 a 3, $p=\frac{8}{3}=2.67$.
 Aplicamos la Ley de Amdahl
-\[S_p=\frac{p}{1 + f \cdot (p-1)} \rightarrow S_p=\frac{2.67}{1 + 0.85 \cdot (2.67-1)=\frac{2,67}{1.4195} \simeq 1.88}
+\[S_p=\frac{p}{1 + f \cdot (p-1)} \rightarrow S_p=\frac{2.67}{1 + 0.85 \cdot (2.67-1)}=\frac{2,67}{1.4195} \simeq 1.88
 \]
 Por tanto, la mejora es aproximadamente del $88\%$
 
