@@ -13,7 +13,7 @@ Para ejecutar use: SumaVectoresC longitud
 #else
 #define omp_get_thread_num() 0
 #endif
-#define PRINTF_ALL// comentar para quitar el printf ...
+//#define PRINTF_ALL// comentar para quitar el printf ...
 // que imprime todos los componentes
 //Sólo puede estar definida una de las tres constantes VECTOR_ (sólo uno de los ...
 //tres defines siguientes puede estar descomentado):
@@ -26,7 +26,7 @@ Para ejecutar use: SumaVectoresC longitud
 //#define VECTOR_DYNAMIC // descomentar para que los vectores sean variables ...
 // dinámicas (memoria reutilizable durante la ejecución)
 #ifdef VECTOR_GLOBAL
-#define MAX 33554432 //=2^25
+#define MAX 67108864 //=2^26
 double v1[MAX], v2[MAX], v3[MAX];
 #endif
 
@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 			v3[i] = v1[i] + v2[i];
 
 	cgt2=omp_get_wtime();
-	ncgt = cgt2-cgt1/ (1.e+9);
+	ncgt = cgt2-cgt1;
 
 //Imprimir resultado de la suma y el tiempo de ejecución
 #ifdef PRINTF_ALL
