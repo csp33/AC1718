@@ -1,0 +1,31 @@
+\select@language {spanish}
+\select@language {spanish}
+\contentsline {figure}{\numberline {1}{\ignorespaces Niveles de paralelismo y granularidad\relax }}{5}{figure.caption.7}
+\contentsline {figure}{\numberline {2}{\ignorespaces Paralelismo de tareas\relax }}{6}{figure.caption.9}
+\contentsline {figure}{\numberline {3}{\ignorespaces Paralelismo impl\IeC {\'\i }cito, expl\IeC {\'\i }cito y arquitecturas paralelas\relax }}{8}{figure.caption.11}
+\contentsline {figure}{\numberline {4}{\ignorespaces Detecci\IeC {\'o}n, utilizaci\IeC {\'o}n, implementaci\IeC {\'o}n y extracci\IeC {\'o}n del paralelismo\relax }}{9}{figure.caption.12}
+\contentsline {figure}{\numberline {5}{\ignorespaces Taxonom\IeC {\'\i }a de Flynn\relax }}{10}{figure.caption.13}
+\contentsline {figure}{\numberline {6}{\ignorespaces Arquitectura SISD\relax }}{11}{figure.caption.15}
+\contentsline {figure}{\numberline {7}{\ignorespaces Arquitectura SIMD\relax }}{11}{figure.caption.17}
+\contentsline {figure}{\numberline {8}{\ignorespaces Arquitectura MIMD\relax }}{11}{figure.caption.19}
+\contentsline {figure}{\numberline {9}{\ignorespaces Arquitectura MISD\relax }}{12}{figure.caption.21}
+\contentsline {figure}{\numberline {10}{\ignorespaces Jerarqu\IeC {\'\i }a de buses\relax }}{14}{figure.caption.24}
+\contentsline {figure}{\numberline {11}{\ignorespaces Multietapa\relax }}{14}{figure.caption.25}
+\contentsline {figure}{\numberline {12}{\ignorespaces Barras cruzadas\relax }}{14}{figure.caption.26}
+\contentsline {figure}{\numberline {13}{\ignorespaces Optimizaciones del tiempo de CPU y sus causantes\relax }}{16}{figure.caption.27}
+\contentsline {figure}{\numberline {14}{\ignorespaces SPMD (Single Program Multiple Data).\relax }}{25}{figure.caption.44}
+\contentsline {figure}{\numberline {15}{\ignorespaces MPMD (Multiple Program Multiple Data).\relax }}{25}{figure.caption.45}
+\contentsline {figure}{\numberline {16}{\ignorespaces Principales herramientas de programaci\IeC {\'o}n paralela.\relax }}{27}{figure.caption.49}
+\contentsline {figure}{\numberline {17}{\ignorespaces Comunicaci\IeC {\'o}n uno a uno.\relax }}{27}{figure.caption.52}
+\contentsline {figure}{\numberline {18}{\ignorespaces Comunicaci\IeC {\'o}n uno a todos.\relax }}{28}{figure.caption.54}
+\contentsline {figure}{\numberline {19}{\ignorespaces Comunicaci\IeC {\'o}n todos a uno.\relax }}{28}{figure.caption.56}
+\contentsline {figure}{\numberline {20}{\ignorespaces Comunicaci\IeC {\'o}n todos a todos.\relax }}{29}{figure.caption.58}
+\contentsline {figure}{\numberline {21}{\ignorespaces Todos combinan.\relax }}{29}{figure.caption.60}
+\contentsline {figure}{\numberline {22}{\ignorespaces Recorrido (\textit {scan}).\relax }}{30}{figure.caption.61}
+\contentsline {figure}{\numberline {23}{\ignorespaces Estilos de programaci\IeC {\'o}n paralela.\relax }}{31}{figure.caption.65}
+\contentsline {figure}{\numberline {24}{\ignorespaces Due\IeC {\~n}o-esclavo.\relax }}{31}{figure.caption.67}
+\contentsline {figure}{\numberline {25}{\ignorespaces Diferentes implementaciones de due\IeC {\~n}o-esclavo.\relax }}{32}{figure.caption.68}
+\contentsline {figure}{\numberline {26}{\ignorespaces Descomposici\IeC {\'o}n de datos.\relax }}{32}{figure.caption.70}
+\contentsline {figure}{\numberline {27}{\ignorespaces Divide y Vencer\IeC {\'a}s.\relax }}{32}{figure.caption.72}
+\contentsline {figure}{\numberline {28}{\ignorespaces Cliente-servidor.\relax }}{33}{figure.caption.74}
+\contentsline {figure}{\numberline {29}{\ignorespaces Segmentada (\textit {pipeline}). Decodificaci\IeC {\'o}n JPEG.\relax }}{33}{figure.caption.76}

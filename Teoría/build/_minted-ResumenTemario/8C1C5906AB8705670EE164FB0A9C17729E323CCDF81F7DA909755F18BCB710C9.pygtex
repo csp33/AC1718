@@ -1,0 +1,10 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{int} \PYG{n+nf}{main}\PYG{p}{()\PYGZob{}}
+ \PYG{k}{if}\PYG{p}{(}\PYG{n}{id\PYGZus{}proc}\PYG{o}{==}\PYG{n}{id\PYGZus{}duenio}\PYG{p}{)\PYGZob{}}
+  \PYG{c+cm}{/**Código dueño**/}
+ \PYG{p}{\PYGZcb{}}
+ \PYG{k}{else}\PYG{p}{\PYGZob{}}
+  \PYG{c+cm}{/**Código esclavo**/}
+ \PYG{p}{\PYGZcb{}}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

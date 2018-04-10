@@ -4,6 +4,7 @@
 \usepackage{amsmath}
 \usepackage{adjustbox}
 \usepackage{multirow}
+\usepackage{subcaption}
 \usepackage[hidelinks]{hyperref}
 \usepackage{caption}
 \usepackage{amsthm}
@@ -788,6 +789,327 @@ $
 La configuración 2 tiene un tiempo de CPU \textbf{mejor}. Sin embargo, si miramos la productividad, vemos como es \textbf{peor}. Esto se debe a que el sistema es más rápido, pero menos productivo, ya que la mejora se ha implementado en la parte que menos se usa.
 \end{solution}
 \end{enumerate}
+
+\section{Tema 2}
+
+\subsection{Programación paralela}
+
+La programación paralela introduce un conjunto de problemas para el programador: división del trabajo en unidades independientes (tareas), sincronización, comunicación, etc.\\
+
+Actualmente, las herramientas y métodos para facilitar el desarrollo de aplicaciones paralelas existentes son un activo campo de investigación. Para el programador lo más sencillo es utilizar compiladores capaces de extraer paralelismo automáticamente. Sin embargo, estos compiladores no generan código eficiente para todos los programas. Por tanto, no sirven de mucho.\\
+
+
+\subsubsection{Punto de partida}
+
+Cuando se plantea obtener una versión paralela de una aplicación, podemos utilizar como punto inicial un código secuencial que resuelva el problema para implantar el paralelismo sobre él. La principal ventaja de esta opción es la posibilidad de medir el tiempo en cada sección, permitiendo distribuir el trabajo de forma equilibrada.\\
+
+Otra posibilidad es partir de la definición de una aplicación y buscar a partir de ella una descripción que admita paralelización.\\
+
+Para facilitar el trabajo podemos apoyarnos en programas paralelos que aprovechen las características de la arquitectura. Si disponemos de un programa paralelo que resuelve un problema parecido en una arquitectura, podemos fijarnos en él para diseñar el nuestro.
+
+\subsubsection{Modos de programación}
+
+\paragraph{SPMD (paralelismo de datos)}
+Todos los códigos que se ejecutan en paralelo se obtienen compilando el mismo programa. Cada copia trabaja con un conjunto de datos distintos y se ejecuta en un procesador diferente.
+
+\paragraph{MPMD} 
+Los códigos que se ejecutan en paralelo se obtienen compilando programas independientes, es decir, la aplicación principal se divide e unidades independientes. Cada unidad trabaja con un conjunto de ddatos y es asignada a un procesador.\\
+
+SPMD es recomendable en sistemas masivamente paralelos, ya que es muy difícil encontrar cientos de unidades de código diferentes dentro de una aplicación, siendo más fácil escribir un sólo programa. En la práctica es el más utilizado en multiprocesadores y multicomputadores.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{spmd.png}
+\caption{SPMD (Single Program Multiple Data).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{mpmd.png}
+\caption{MPMD (Multiple Program Multiple Data).}
+\end{figure}
+
+\subsubsection{Herramientas para obtener programas paralelos}
+
+Las herramientas para obtener programas paralelos deben permitir de forma explícita (el trabajo lo hace el programador) o implícita (el trabajo lo hace la propia herramienta) las siguientes tareas:
+
+\begin{itemize}
+	\item Localizar paralelismo.
+	\item Crear y terminar procesos.
+	\item Distribuir trabajo entre procesos.
+	\item Comunicación y sincronización entre procesos.
+	\item Asignación de procesos a procesadores.
+\end{itemize}
+
+Para obtener un programa paralelo tenemos varias opciones:
+
+\paragraph{Bibliotecas de funciones para programación paralela}
+
+En esta alternativa el programador utiliza un lenguaje secuencial y una biblioteca de funciones. El cuerpo de los procesos y hebras se escribe con lenguaje secuencial y el programador se encarga explícitamente de dividir las tareas entre los procesos, crear o destruir los procesos, implementar la comunicación, etc. Las principales ventajas de esta alternativa son:
+\begin{itemize}
+	\item Los programadores no tienen que aprender un nuevo lenguaje.
+	\item Las bibliotecas están disponibles para todos los sistemas paralelos.
+	\item Las bibliotecas están más cercanas al hardware y dan al programador un control a más bajo nivel.
+	\item Se pueden utilizar a la vez bibliotecas para programar con hebras y bibliotecas para programar con procesos.
+\end{itemize}
+
+Las APIs más famosas son MPI, OpenMP, Pthread, etc.
+
+\paragraph{Lenguajes paralelos y directivas del compilador}
+
+Sitúan al programador en un nivel de abstracción superior, ahorrando o facilitando el trabajo de paralelización, aunque puede que sólo se aproveche uno de ellos: de datos o de tareas. Los lenguajes paralelos facilitan estas tareas mediante:
+\begin{itemize}
+	\item Construcciones propias del lenguaje. Pueden tanto distribuir la carga de trabajo como crear y terminar procesos e incluir sincronización.
+	\item Directivas del compilador.
+	\item Funciones de biblioteca. Implementan en paralelo algunas operaciones usuales.
+\end{itemize}
+
+La ventaja principal de los lenguajes paralelos es que son más fáciles de escribir y entender a la vez que más cortos.
+
+\paragraph{Compiladores paralelos}
+
+Se pretende que un compilador paralelo extraiga automáticamente el paralelismo tanto a nivel de bucle (paralelismo de datos) como a nivel de función (paralelismo de tareas). Para ello, hacen análisis de dependencias entre bloques de código, iteraciones de un bucle o funciones. Las dependencias que detecta son RAW, WAW y WAR.\\
+
+Los compiladores paralelos están aún limitados a aplicaciones que exhiben un paralelismo regular, como los cálculos a nivel de bucle.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.4]{herramientas_programacion_paralela.png}
+\caption{Principales herramientas de programación paralela.}
+\end{figure}
+
+\paragraph{Otras alternativas}
+
+\subparagraph{Comunicación múltiple uno a uno}
+Hay componentes del grupo que envían un único mensaje (dato o estructura de datos) y componentes que reciben un único lenguaje.\\
+
+Si todos los componentes envían y reciben, se implementa una \emph{permutación}. Algunos ejemplos de permutaciones son la rotación, el intercambio, los barajes, etc.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{uno_a_uno.png}
+\caption{Comunicación uno a uno.}
+\end{figure}
+
+\subparagraph{Comunicación uno a todos}
+
+
+Un proceso envía u todos los procesos reciben. Hay variantes en las que el proceso que envía no forma parte del grupo y otras en las que reciben todos excepto el que envía. Hay dos subtipos:
+
+\begin{itemize}
+	\item \textbf{Difusión}. Todos los procesos reciben el mismo mensaje.
+	\item \textbf{Dispersión (\textit{scatter})}. Cada proceso receptor recibe un mensaje diferente.	
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{uno_a_todos.png}
+\caption{Comunicación uno a todos.}
+\end{figure}
+
+
+\subparagraph{Comunicación todos a uno}
+
+Todos los procesos del grupo envían un mensaje a un único proceso.
+
+\begin{itemize}
+	\item \textbf{Reducción}. Los mensajes enviados por los procesos se combinan en un solo mensaje mediante algún operador. La combinación es normalmente conmutativa y asociativa.
+	\item \textbf{Acumulación (\textit{gather})}. Los mensajes se reciben de forma concatenada en el receptor. El orden en que se concatenan depende normalmente del identificador de proceso.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{todos_a_uno.png}
+\caption{Comunicación todos a uno.}
+\end{figure}
+
+\subparagraph{Comunicación todos a todos}
+
+Todos los procesos del grupo ejecutan una comunicación \emph{uno a todos}. Cada proceso recibe \textit{n} mensajes, cada uno de un proceso diferente del grupo.
+
+\begin{itemize}
+	\item \textbf{Todos difunden (\textit{all-broadcast})}. Todos los procesos realizan una difusión. Normalmente las transferencias recibidas por un proceso se concatenan según el identificador de proceso.
+	\item \textbf{Todos dispersan (\textit{all-scatter})}. Los procesos concatenan diferentes transferencias. En el ejemplo se muestra una trasposición de una matriz 4x4. Cada procesador $P_i$ dispersa la fila $i(x_{i0},x_{i1},...)$. Tras la ejecución, $P_i$ tendrá la columna $i(x_{0i},x_{1i},...)$.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{todos_a_todos.png}
+\caption{Comunicación todos a todos.}
+\end{figure}
+
+\subparagraph{Comunicaciones colectivas compuestas}
+
+Las comunicaciones anteriores se pueden combinar dando lugar a nuevos servicios:
+
+\begin{itemize}
+	\item \textbf{Todos combinan o reducción y extensión}. Se aplica una reducción a todos los procesos, ya sea difundiéndola una vez obtenida (reducción y extensión) o bien realizándola en todos los procesos (todos combinan).
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.3]{todos_combinan.png}
+		\caption{Todos combinan.}
+	\end{figure}
+	\item \textbf{Barrera}. Es un punto de sincronización que todos los procesos de un grupo deben alcanzar para poder continuar su ejecución. Se puede implementar mediante cerrojos o a nivel software.
+	\item \textbf{Recorrido (\textit{scan})}. Todos los procesos envían un mensaje, recibiendo cada uno el resultado de reducir un conjunto de esos mensajes.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[scale=0.3]{scan.png}
+		\caption{Recorrido (\textit{scan}).}
+	\end{figure}
+\end{itemize}
+	
+\subsubsection{Estilos de programación}
+
+\paragraph{Paso de mensajes}
+
+Disponemos de dos funciones principales:
+\begin{itemize}
+	\item \textbf{send(destino,datos)}. Envía datos.
+	\item \textbf{receive(fuente,datos)}. Recibe datos.
+\end{itemize}
+
+Por lo general podemos encontrar transmisiones \emph{síncronas} (cuando ejecutamos un \emph{send}, el proceso se bloquea hasta que el destino recibe el dato y viceversa con \emph{receive}) o \emph{asíncronas} (\emph{send} no bloquea, por lo que suele hacerlo \emph{receive}).
+
+La interfaz más conocida de paso de mensajes es MPI.
+
+\paragraph{Variables compartidas}
+
+La comunicación entre procesos se realiza accedeiendo a variables compartidas, es decir, mediante accessos y escrituras en memoria. Las hebras de un proceso creadas por el sistema operativo pueden compartir inmediatamente variables globales, pero los procesos no (tienen diferentes espacios de direcciones). En este caso, hemos de utilizar llamadas al sistema específicas.\\
+
+La exclusión mutua se puede implementar mediante cerrojos, semáforos, variables condicionales, monitores, etc.\\
+
+La interfaz más utilizada es OpenMP. Hay lenguajes, como Java, que implementan este paradigma.
+
+\paragraph{Paralelismo de datos}
+
+En este estilo se aprovecha el paralelismo de datos inherente a aplicaciones en las que los datos se organizan en estructuras (vectores o matrices). El programador escribe un programa con construcciones que permiten aprovechar el paralelismo: construcciones para paralelizar bucles, para distribuir datos, etc. Por tanto, no ha de ocuparse de las sincronizaciones, ya que son implícitas.\\
+
+El lenguaje con paralelismo de datos más conocido es C* (\textit{C star}). En cuanto a APIs, destaca \textit{Nvidia CUDA}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{estilos_programacion.png}
+	\caption{Estilos de programación paralela.}
+\end{figure}
+
+\subsubsection{Estructuras de programas paralelos}
+
+\paragraph{Dueño-esclavo (\textit{master-slave}) o granja de tareas (\textit{task-farming})}
+
+Consta de un dueño y varios esclavos. El dueño se encarga de distribuir las tareas de un conjunto (granja) entre el grupo de esclavos y de ir recogiendo los resultados parciales que van calculando los esclavos. El dueño calcula el resultado final a partir de estos resultados parciales. Normalmente no hay comunicación entre los esclavos.\\
+
+Se puede implemenmtar de forma mixta MPMD-SPMD con un programa para el dueño y otro para los esclavos o bien mediante SPMD con un sólo programa para ambos.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.25]{maestro_esclavo.png}
+	\caption{Dueño-esclavo.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.3\textwidth}
+\begin{minted}[linenos]{c++}
+int main(){
+/**Código dueño***/
+}
+--------------
+int main(){
+/**Código esclavo***/
+}
+\end{minted}
+\caption{Dueño-esclavo como MPMD-SPMD}
+\end{subfigure}
+\hspace{5cm}
+\begin{subfigure}[b]{0.3\textwidth}
+\begin{minted}[linenos]{c++}
+int main(){
+ if(id_proc==id_duenio){
+  /**Código dueño**/
+ }
+ else{
+  /**Código esclavo**/
+ }
+}
+\end{minted}
+\caption{Dueño-esclavo como MPMD-SPMD}
+\end{subfigure}
+\caption{Diferentes implementaciones de dueño-esclavo.}
+\end{figure}
+
+\paragraph{Paralelismo de datos o descomposición de datos}
+
+Esta alternativa se utiliza para obtener tareas paralelas en problemas en los que se opera con grandes estructuras de datos. La estructura de datos de entrada o la de salida (o ambas) se dividen en partes, de las que derivarán las tareas paralelas.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.25]{descomposicion_datos.png}
+	\caption{Descomposición de datos.}
+\end{figure}
+
+\paragraph{Divide y Vencerás}
+
+Consiste en dividir un problema en dos o más subproblemas de forma que cada uno se pueda resolver de forma independiente y combinar los resultados para obtener el resultado final. Si los subproblemas son instancias más pequeñas que el original, podremos implementarlo mediante recursividad.
+
+\begin{figure}[H]
+\begin{subfigure}[b]{0.5\textwidth}
+	\includegraphics[width=\textwidth]{dyv.png}
+\end{subfigure}
+\quad
+\begin{subfigure}[b]{0.5\textwidth}
+	\includegraphics[width=\textwidth]{dyv_2.png}
+\end{subfigure}
+\caption{Divide y Vencerás.}
+\end{figure}
+
+\paragraph{Cliente-servidor}
+
+Los clientes realizan peticiones a un servidor y éste les envía las respuestas.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.25]{cliente_servidor.png}
+	\caption{Cliente-servidor.}
+\end{figure}
+
+\paragraph{Segmentada (\textit{pipeline}) o flujo de datos}
+
+Aparece en probelmas en los que se aplican distintas funciones a un mismo flujo de datos (paralelismo de tareas). La estructura de procesos y de tareas es la de un cauce segmentado, por lo que cada proceso ejecuta distinto código (MPMD).
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.35]{segmentada.png}
+	\caption{Segmentada (\textit{pipeline}). Decodificación JPEG.}
+\end{figure}
+
+
+
+
+\subsection{Proceso de paralelización}
+
+\subsubsection{Descomposición de tareas}
+
+
+\subsubsection{Asignar tareas a procesos o hebras}
+
+
+\subsubsection{Escribir el código paralelo}
+
+
+\subsubsection{Evaluación de prestaciones}
+
+
+
+\subsection{Prestaciones en computadores paralelos}
+
+\subsubsection{Benchmark en computadores paralelos}
+
+
+\subsubsection{Ganancia en prestaciones. Escalabilidad}
+
+
+\subsubsection{Ejercicios}
+
 
 
 
