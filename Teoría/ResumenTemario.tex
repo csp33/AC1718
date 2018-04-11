@@ -5,6 +5,7 @@
 \usepackage{adjustbox}
 \usepackage{multirow}
 \usepackage{subcaption}
+\usepackage{amssymb}
 \usepackage[hidelinks]{hyperref}
 \usepackage{caption}
 \usepackage{amsthm}
@@ -1084,26 +1085,177 @@ Aparece en probelmas en los que se aplican distintas funciones a un mismo flujo 
 
 
 \subsection{Proceso de paralelización}
-
+Para obtener una versión paralela de una aplicación debemos seguir los siguientes pasos:
+\begin{itemize}
+	\item Descomponer la aplicación en tareas.
+	\item Asignar tareas a procesos o hebras.
+	\item Redactar código paralelo
+	\item Evaluar prestaciones
+\end{itemize}
 \subsubsection{Descomposición de tareas}
 
+En esta fase el programador busca unidades de trabajo independientes, es decir, que se podrán ejecutar en paralelo. Estas unidades, junto con los datos que utilizan, formarán las \textbf{tareas}. Podemos represetnar la estructura de las tareas (sus dependencias) meddiante un grafo dirigido en el que las aristas representen el flujo de datos y control y los vértices, las tareas.\\
+
+El paralelismo se puede extraer en varios niveles de abstracción:
+\begin{itemize}
+	\item \textbf{Nivel de función}. Analizando las dependencias entre las funciones del código (paralelismo de tareas).
+	\item \textbf{Nivel de bucle}. Analizando las iteraciones de los bucles dentro de una función (paralelismo de datos).
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.35]{grafo_dependencias_tareas.png}
+	\caption{Segmentada (Grafo de dependencias entre tareas.}
+\end{figure}
 
 \subsubsection{Asignar tareas a procesos o hebras}
+
+Esta etapa consiste en asignar las tareas del grafo de dependencias a procesos y a hebras. Por lo general, en una misma aplicación no resulta conveniente asignar más de un proceso o hebra por procesador, por lo que la asignación a procesos o hebras está ligada con la asignación a procesadores. Es más, se puede incluso realizar la asignación asociando los procesos (hebras) a procesadores concretos.\\
+
+La posibilidad de utilizar procesos y/o hebras depende de varios factores:
+
+\begin{itemize}
+	\item La \textbf{arquitectura} en la que se va a ejecutar el programa. En un SMP (\textit{Symetric MultiProcessor}) y en procesadores multihebra es más eficiente usar hebras, mientras que en arquitecturas mixtas (como clústers de SMPs) es conveniente usar tanto hebras como procesos.
+	\item El \textbf{Sistema Operativo} debe ser multihebra.
+	\item La \textbf{herramienta de programación} debe permitir el uso de hebras.
+\end{itemize}
+Como regla básica, se tiende a asignar las iteraciones de un bucle (paralelismo de datos) a hebras y las funciones a procesos (paralelismo de tareas).\\
+
+La asignación debe repartir la \emph{carga de trabajo} (tiempo de cálculo) optimizando la \emph{comunicación y sincronización}, de forma que todos los procesadores empiecen y terminen a la vez.\\
+
+Las arquitecturas pueden ser heterogéneas u homogéneas. Si es \textbf{heterogénea}, consta de componentes con diferentes prestaciones, por lo que se deberá asignar más trabajo a nodos más rápidos. Una arquitectura \textbf{homogénea} puede ser muy uniforme o no. Si es \textbf{uniforme}, la comunicación de los procesadores con memoria (multiprocesadores) o entre sí (multicomputadores) supone el mismo tiempo sean cuales sean los nodos que intervienen.\\
+
+Si la arquitectura es homogénea pero \textbf{no uniforme}, es más difícil asignar las tareas de forma que se minimice el tiempo de comunicación y sincronización (aristas en el grafo de tareas) y en general el tiempo de ejecución. \\
+
+La asignación de tareas a procesadores (procesos, hebras) se puede realizar de forma \textbf{estática}, es decir, en tiempo de compilación o al escribir el programa o de forma \textbf{dinámica} (en tiempo de ejecución).
 
 
 \subsubsection{Escribir el código paralelo}
 
+El código dependerá del estilo de programación utilizado (variables compartidas, paso de mensajes, paralelismo de datos), del modo de programación (SPMD, MPMD, mixto,...), del punto de partida, etc.\\
 
+En el programa habrá que añadir olas funciones, directivas o construcciones del lenguaje que hagan falta para:
+
+\begin{itemize}
+	\item Crear y terminar procesos.
+	\item Localizar paralelismo.
+	\item Asignar la carga de trabajo.
+	\item Comunicar y sincronizar los diferentes procesos.
+\end{itemize}
 \subsubsection{Evaluación de prestaciones}
 
+Una vez redactado el programa paralelo, se evaluarían sus prestaciones. Si no son las requeridas, se debe volver a etapas anteriores del proceso de implementación. Si volvemos a la etapa de escritura, podemos elegir otra herramienta de programación, ya que no todas ofrecen las mismas prestaciones.
 
 
 \subsection{Prestaciones en computadores paralelos}
 
-\subsubsection{Benchmark en computadores paralelos}
+En computadores paralelos se utilizan principalmente las siguientes medidas de prestaciones:
+
+\begin{itemize}
+	\item \textbf{Tiempo de ejecución (respuesta)}. Es el tiempo que supone la ejecución de una entrada en el sistema.
+	\item \textbf{Productividad (\textit{throughput})}. Es el número de entradas (aplicaciones) que el computador es capaz de procesar por unidad de tiempo.
+\end{itemize}
+
+Hay sistemas orientados a la mejora de la productividad (asignan cada entrada a un nodo de cómputo diferente), a la mejora del tiempo de respuesta (dividiendo el trabajo entre procesos) y orientados a ambos propósitos, como los servidores de internet.\\
+
+También se utilizan otras medidas adicionales de prestaciones:
+
+\begin{itemize}
+	\item\textbf{Funcionalidad}. Cargas de trabajo para las que está orientado el diseño de la arquitectura.
+	\item \textbf{Alta disponibilidad}. Presencia de recursos y software en el sistema para reducir el tiempo de inactividad y la degradación de prestaciones ante un fallo o por mantenimiento.
+	\item \textbf{RAS (\textit{Reliability, Availability, Serviceability})}. Comprende tres propiedades cruciales: fiabilidad (capacidad del sistema de producir siempre los mismos resultados para las mismas entradas), disponibilidad (grado en el que un sistema sufre degradaciuón de prestaciones o detiene su funcionamiento por fallos o mantenimientos y serviciabilidad (facilidad con la que un técnico de hardware puede realizar el mantenimiento).
+	\item \textbf{Tolerancia a fallos}. Capacidad de un sistema de mantenerse en funcionamiento ante un fallo.
+	\item \textbf{Expansibilidad}. Posibilidad de expandir el sistema modularmente.
+	\item \textbf{Escalabilidad}. Evolución del incremento (ganancia) en prestaciones que se consigue en el sistema conforme se añaden recursos (principalmente procesadorees). Pretende medir el nivel de aprovechamiento efectivo de los recursos.
+	\item \textbf{Consumo de potencia}. Afecta a los costos de mantenimiento.
+\end{itemize}
+
+También se suele hablar de \textbf{eficiencia}, con la que se evalúa en qué medida las prestaciones que ofrece un sistema para sus entradas se acerca a las prestaciones máximas que idealmente debería ofrecer dados los recursos de los que dispone. Es decir, se emplea para evaluar en qué medida se utilizan los recursos del sistema.
 
 
 \subsubsection{Ganancia en prestaciones. Escalabilidad}
+
+Se emplea la ganancia en velocidad para estudiar en qué medida se incrementan las prestaciones al ejecutar una aplicación en paralelo en un sistema con múltiples procesadores frente a su ejecución en un sistema uniprocesador.
+\begin{equation}
+	S(p)=\frac{Prestaciones(p)}{Prestaciones(1)}
+\end{equation}
+
+Es decir, dividiendo las prestaciones conseguidas con un sistema multiprocesador entre las prestaciones obtenidas con la versión secuencial. Utilizando el tiempo de respuesta para evaluar prestaciones, quedaría:
+\begin{equation}
+S(p)=\frac{T_{secuencial}}{T_{paralelo}(p)}
+\end{equation}
+siendo $T_{paralelo}(p)=T_{computo}(p)+T_{overhead}(p)$\\
+$T_{secuencial}$ debe ser el tiempo del mejor programa secuencial para la aplicación. En la penalización (\textit{overhead}) influyen factores como:
+\begin{itemize}
+	\item Tiempo de comunicación/sincronización entre procesos.
+	\item Tiempo para crear/terminar procesos.
+	\item Tiempo de ejecución de operaciones añadidas a la versión paralela no presentes en la secuencial.
+\end{itemize}
+
+
+Tanto el tiempo de cálculo paralelo como la sobrecarga dependen del número de procesos, Cuanto mayor sea, mayor será el \textit{grado de paralelismo} aprovechado. El grado de paralelismo para un programa es el número máximo de tareas independientes que se pueden ejecutar en paralelo. La sobrecarga depende del número de procesos involucrados.\\
+
+La representación de la ganancia en función del número de procesadores nos permite evaluar la escalabilidad de una implementación paralela o una arquitectura.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.35]{escalabilidad.png}
+	\caption{Segmentada (Ganancia frente a número de procesadores (escalabilidad).}
+\end{figure}
+
+Podemos ver que se dan varios casos:
+\begin{enumerate}
+	\item \textbf{Ganancia lineal}. El grado de paralelismo debe ser ilimitado, es decir, siempre se debe poder dividir el código entre los $p$ procesadores disponibles sea cual sea el valor de $p$. Además, el \textit{overhead} debe ser despreciable. $S_p=\frac{T_{secuencial}}{T_{paralelo}}=p$.
+	\item \textbf{Ganancia superlineal} ($S_p>p$). Se debe a que al aumentar el número de procesadores aumentamos también el de otros recursos (caché, memoria principal, etc.) o bien a que la aplicación debe explorar varias posibilidades y termina cuando una es solución. 
+	\item \textbf{Limitación al aprovechar el grado de paralelismo}. Se produce cuando hay código no paralelizable y la paralelización que se puede realizar no mejora las prestaciones.
+	\item \textbf{Reducción debida a la sobrecarga}. Se produce cuando el incremento del número de procesadores no hace que el programa sea más rápido, pero sí que hace que el \textit{overhead} sea mayor.
+\end{enumerate}
+
+
+\paragraph{Ley de Amdahl}
+
+Como vemos, la mejora en prestaciones está limitada por la fracción de código que no se puede paralelizar. Este razonamiento se formalizó por Amdahl mediante la siguiente ley:
+\begin{equation}
+	S(p)\leq \frac{p}{1+f(p-1)}
+\end{equation}
+donde:
+\begin{itemize}
+	\item $S$: incremento en velocidad que se consigue al aplicar una mejora.
+	\item $p$: incremento en velocidad máximo que se puede conseguir si se usa siempre la mejora (número de procesadores).
+	\item $f$: fracción de tiempo en la que no se utiliza la mejora (fracción de tiempo no paralelizable).
+\end{itemize}
+
+La ley de Amdahl nos dice que la escalabilidad está limitada por la fracción de tiempo no paralelizable. Sin embargo, en muchas aplicaciones podemos disminuirla aumentando el tamaño del problema, lo que conduce a un aumento de la ganancia.
+
+\paragraph{Ganancia escalable. Ley de Gustafson}
+
+Los objetivos al paralelizar una aplicación pueden ser:
+\begin{itemize}
+	\item Disminuir el tiempo de ejecución hasta que sea razonable.
+	\item Aumentar el tamaño del problema a resolver, lo que nos puede llevar a mejoras como el aumento de la precisión.
+\end{itemize}
+
+Cuando llegamos a un nivel aceptable de tiempo de ejecución paralelo, el siguiente objetivo puede ser aumentar el tamaño del problema para poder mejorar otros aspectos de las prestaciones de la aplicación. Si consideramos el tiempo de \textit{overhead} insignificante, podemos mantener constante el tiempo de ejecución paralelo $T_p$ variando el número de procesadores $p$ y el tamaño $n$ de forma que $n=\Bbbk p$ con $\Bbbk \in \mathbb{R}$. Bajo estas condiciones, la ganancia en prestaciones sería:
+
+\begin{equation}
+S(p)=\frac{T_{secuencial}(n)}{T_{paralelo}}=\frac{f \cdot T_{paralelo} + p(1-f) \cdot T_{paralelo}}{T_{paralelo}}= p(1-f) + f
+\end{equation}
+donde $f$ representa la fracción de tiempo de la ejecución del programa paralelo que supone la ejecución de la parte no paralelizable. Cuanto mayor sea $1-f$, mayor será la escalabilidad.\\
+
+Mientras que la Ley de Amdahl asume que el $T_{secuencial}$ (o tamaño de problema) es constante, Gustaffson mantiene que lo constante es el $T_{paralelo}$. Ambos consideran despreciable el \textit{overhead}.
+
+\paragraph{Eficiencia}
+
+La eficiencia permite evaluar en qué medida las prestaciones ofrecidas por un sistema para un programa paralelo se acercan a las prestaciones máximas que idealmente debería ofrecer.
+
+\begin{equation}
+	E(p,n)=\frac{Prestaciones (p,n)}{Prestaciones (1,n)}=\frac{S(p,n)}{p}
+\end{equation}
+donde:
+\begin{itemize}
+	\item $p$ representa el número de recursos (procesadores).
+	\item $n$ representa el tamaño del problema.
+\end{itemize}
 
 
 \subsubsection{Ejercicios}

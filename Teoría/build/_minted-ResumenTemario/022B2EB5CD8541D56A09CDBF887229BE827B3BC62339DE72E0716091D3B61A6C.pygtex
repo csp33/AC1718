@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{p}{...}
+\PYG{n}{a}\PYG{o}{=}\PYG{n}{b}\PYG{o}{+}\PYG{n}{c} \PYG{c+c1}{//[B1 escribe a]}
+\PYG{n}{a}\PYG{o}{=}\PYG{n}{d}\PYG{o}{+}\PYG{n}{e} \PYG{c+c1}{//[B2 escribe a]}
+\PYG{p}{...}
+\end{Verbatim}

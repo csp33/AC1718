@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kt}{int} \PYG{n+nf}{main}\PYG{p}{()\PYGZob{}}
+\PYG{c+cm}{/**Código dueño***/}
+\PYG{p}{\PYGZcb{}}
+\PYG{o}{\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}\PYGZhy{}}
+\PYG{k+kt}{int} \PYG{n}{main}\PYG{p}{()\PYGZob{}}
+\PYG{c+cm}{/**Código esclavo***/}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}
