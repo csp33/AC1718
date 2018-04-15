@@ -52,9 +52,12 @@ int main(int argc, char **argv) {
 	//Inicialización
 
 	for (int i = 0; i < TAM; i++) {
-		v1[i] = 1;
+		v1[i] = TAM;
 		for (int j = 0; j < TAM; j++)
-			m[i][j] = 1;
+			if (i == j)
+				m[i][j] = 1;
+			else
+				m[i][j] = 0;
 	}
 
 #if TEST
