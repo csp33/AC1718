@@ -1555,8 +1555,26 @@ Un nodo terminal puede generar las siguientes transferencias como consecuencia d
 
 \subsubsection{Protocolo MESI de espionaje}
 
+También denominado protocolo de invalidación de cuatro estados. También utiliza posescritura y escritura con invalidación.\\
 
+En el protocolo MSI, si un procesador escribía en un bloque de su caché tenía que generar una transferencia que invalidase copias en otras cachés, aunque no hubiera copias del bloque en cachés de otros procesadores. Este hecho degrada las prestaciones de aplicaciones secuenciales ejecutadas en multiprocesadores, ya que no comparten variables entre procesos. \\
 
+Para solventar este problema se añade un nuevo estado: \emph{exclusivo}. Un bloque en estado exclusivo será válido sólo en la caché en la que se encuentra y en memoria. Si un bloque se encuentra en estado exclusivo en la caché de un nodo y el procesador del nodo escribe en el bloque, no se genera paquete para solicitar uso exclusivo e invalidar copias, ya que sabemos que ninguna otra caché tiene copia válida.\\
+
+Los posibles estados de un bloque son:
+
+\begin{itemize}
+	\item \textbf{Modificado} (M). Es la única copia válida en todo el sistema.
+	\item \textbf{Exclusivo} (E). Es la única caché en el sistema con una copia válida del bloque, el resto tienen una copia no válida. La memoria tiene también una copia actualizada del bloque. La caché debe invalidar su copia si observa que algún otro nodo solicita una copia exclusiva del bloque para su modificación.
+	\item \textbf{Compartido}  (C). El bloque es válido, también en memoria y en al menos alguna otra caché. La caché debe invalidar su copia si observa que algún otro nodo solicita una copia exclusiva del bloque para su modificación.
+	\item \textbf{Inválido} (I). El bloque no está físicamente en caché o bien está en estado no válido.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{mesi.png}
+\caption{Descripción de MESI. Quitando lo tachado se obtiene MSI.}
+\end{figure}
 
 \subsubsection{Protocolo MSI basado en directorios con o sin difusión}
 
@@ -1567,7 +1585,7 @@ Un nodo terminal puede generar las siguientes transferencias como consecuencia d
 
 \subsection{Consistencia del sistema de memoria}
 
-\subsubsection{Conecpto de consistencia de memoria}
+\subsubsection{Concepto de consistencia de memoria}
 
 
 
