@@ -1260,7 +1260,259 @@ donde:
 
 \subsubsection{Ejercicios}
 
+\newpage
+
+\section{Tema 3}
+
+\subsection{Arquitecturas TLP}
+
+\subsubsection{Clasificación de arquitecturas con TLP explícito y una instancia de SO}
+
+\begin{itemize}
+	\item Los \textbf{multiprocesadores} ejecutan varios threads en paralelo en un computador (cada thread en un core distinto). 
+	\item Los multiprocesadores en un chip (CMP) o \textbf{multicore} ejecutan varios threads en paralelo en un chip de procesamiento multicore (cada thread en un core distinto).
+	\item Los \textbf{core multithread} son cores que modifican su arquitectura ILP para ejecutar threads concurrentemente (en paralelo)
+\end{itemize}
+
+\subsubsection{Multiprocesadores}
+Ejecutan varios threads en paralelo en un computador (cada thread en un core distinto). 
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{uma_vs_numa.png}
+\caption{Tipos de multiprocesadores según sistema de memoria.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.3]{uma_vs_numa_pack.png}
+\caption{Tipos de multiprocesadores según empaquetamiento.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{0.3\textwidth}
+\includegraphics[width=\textwidth]{arq_uma.png}
+\caption{UMA}
+\end{subfigure}
+\quad
+\begin{subfigure}{0.3\textwidth}
+\includegraphics[width=\textwidth]{arq_numa.png}
+\caption{NUMA}
+\end{subfigure}
+\vspace{1cm}
+\begin{tabular}{|m{3cm}|m{5cm}|m{5cm}|}
+\hline
+&\textbf{UMA} & \textbf{NUMA} \\
+ \hline
+Controlador de memoria & Chipset (\textit{Northbridge)} & Chip del procesador \\
+\hline
+Red & Bus (compartido) & Enlaces (conexiones punto a punto) y conmutadores (en el chip del procesador).\\
+\hline
+\end{tabular}
+\caption{Diferencias entre UMA y NUMA.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{placa_uma.png}
+\caption{Placa base y CPU UMA.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.65]{placa_numa.png}
+\caption{Placa base y CPU NUMA.}
+\end{figure}
 
 
+\subsubsection{Multicores}
+
+Ejecutan varios threads en paralelo en un chip de procesamiento multicore (cada thread en un core distinto).
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.65]{cmp.png}
+\caption{Ejemplo de multicore.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.65]{cmp_arq.png}
+\caption{Posibles arquitecturas de multicore.}
+\end{figure}
+
+
+\subsubsection{Cores multithread}
+
+Modifican su arquitectura ILP (segmentada, escalar o VLIW) para ejecutar threads concurrentemente o en paralelo.
+
+Las operaciones tienen varias estapas:
+\begin{enumerate}
+	\item Captación (\textbf{I}nstruction \textbf{F}etch).
+	\item Decodificación y emisión a unidades funcionales (\textbf{I}nstruction \textbf{D}ecode).
+	\item Ejecución (\textbf{Ex}ecution) y acceso a memoria (\textbf{Mem}ory).
+	\item Almacenamiento de resultados (\textbf{W}rite-\textbf{B}ack).
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{tipos_ilp.png}
+\caption{Tipos de arquitecturas ILP.}
+\end{figure}
+
+\begin{itemize}
+	\item Los procesadores \textbf{segmentados} ejecutan instrucciones concurrentemente segmentando el uso de sus componentes.
+	\item Los procesadores VLIW (\textit{Very Large Instruction Word} y los superescalares ejecutan las instrucciones concurrentemente (segmentación) y en paralelo (tienen múltiples unidades funcionales).
+		\begin{itemize}
+			\item VLIW
+				\begin{itemize}
+					\item Las instrucciones que se ejecutan en paralelo se captan juntas, formando la VLIW.
+					\item El paralelismo (de instrucciones) es extraído mediante software.
+				\end{itemize}
+				\item Superescalares. El paralelismo de instrucciones es extraído mediante hardware específico.
+		\end{itemize}
+\end{itemize}
+
+Los cores multithread se pueden clasificar en dos grandes grupos:
+
+\begin{itemize}
+	\item \textit{Temporal Multithreading} (\textbf{TMT}). 
+	\begin{itemize}
+		\item 	Ejecutan varios threads concurrentemente en el mismo core.
+		\item La conmutación entre threads es gestionada por el hardware.
+		\item Emite instrucciones de un único thread en un ciclo.
+	\end{itemize}
+	\item \textit{Simultaneus Multithreading} (\textbf{SMT}), multihilo simultáneo o \textit{horizontal multithread}.
+		\begin{itemize}
+			\item Ejecutan en un core superescalar varios threads en paralelo.
+			\item Pueden emitir instrucciones de varios threads en un ciclo.
+		\end{itemize}
+\end{itemize}
+
+A su vez, los cores TMT se pueden dividir en:
+
+\begin{itemize}
+	\item \textit{Fine-grain multithreading} (\textbf{FGMT}) o \textit{interleaved multithreading}.
+	 La conmutación entre threads la decide el hardware en cada ciclo (coste 0). Utiliza algoritmos de planificación, como \textit{Round-Robin}.
+	 \item \textbf{Coarse-grain mutithreading} (\textbf{CGMT}) o \textit{blocked multithreading}. La conmutación entre threads la decide el hardware (coste 0) en varios ciclos. Pueden ser en intervalos de tiempo prefijados o bien por eventos de cierta latencia.
+\end{itemize}
+
+Por último, los cores con CGMT y conmutación por eventos se clasifican en:
+
+\begin{itemize}
+	\item \textbf{Estática}. La conmutación puede ser explícita (instrucciones añadidas al repertorio) o implícita (usando instrucciones existentes). Su principal ventaja es que el coste del cambio de contexto es bajo (0/1 ciclo) y su inconveniente que se realizan cambios de contexto innecesarios.
+	\item \textbf{Dinámica}. La conmutación se realiza por un fallo en la última caché, una interrupción, etc. Su principal ventaja es que reduce los cambios de contexto innecesarios pero aúin así se añade sobrecarga al realizar cambios de contexto.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{alt_core_escalar_segmentado.png}
+\caption{Alternativas en un core escalar segmentado (se emite una instrucción por ciclo).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{alt_superescalar.png}
+\caption{Alternativas en un core superescalar o VLIW (se emiten varias instrucciones por ciclo pertenecientes a un único thread).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{alt_multicore.png}
+\caption{Alternativas en multicores (se emiten instrucciones de distintos threads en cada ciclo).}
+\end{figure}
+
+
+\subsubsection{Hardware y arquitecturas TLP en un chip}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.8]{arq_tlp.png}
+\caption{Hardware y arquitecturas TLP en un chip.}
+\end{figure}
+
+\subsection{Coherencia del sistema de memoria}
+
+
+\subsubsection{Sistema de memoria en multiprocesadores}
+
+El uso de jerarquía de memoria con el fin de acercar la velocidad de acceso a memoria a la del procesador hace posible que pueda haber varias  copias de un mismo bloque en el sistema. Ésto puede ocurrir tanto en multiprocesadores como en uniprocesadores. El \emph{sistema de memoria} incluye las cachés de todos los nodos, memoria principal, controladores, buffers (escritura, combinación de escrituras, etc.) así como el medio de comunicación de estos componentes (red de interconexión).\\
+
+La comunicación de datos entre procesadores es relizada por el sistema de memoria. Para que sea coherente, la lectura de una dirección debe devolver lo último que se ha escrito (desde el punto de vista de todos los componentes del sistema).
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.8]{sist_memoria.png}
+\caption{Sistema de memoria.}
+\end{figure}
+
+\subsubsection{Concepto de coherencia en el sistema de memoria:  situaciones de incoherencia y requisitos para evitar problemas en estos casos}
+
+
+
+\subsubsection{Protocolos de mantenimiento de coherencia: clasificación y diseño}
+
+
+
+\subsubsection{Protocolo MSI de espionaje}
+
+
+
+
+\subsubsection{Protocolo MESI de espionaje}
+
+
+
+
+\subsubsection{Protocolo MSI basado en directorios con o sin difusión}
+
+
+
+
+
+
+\subsection{Consistencia del sistema de memoria}
+
+\subsubsection{Conecpto de consistencia de memoria}
+
+
+
+
+
+\subsubsection{Consistencia secuencial}
+
+
+
+
+
+
+\subsubsection{Modelos de consistencia relajados}
+
+
+
+
+
+
+
+\subsection{Sincronización}
+
+
+\subsubsection{Comunicación en multiprocesadores y necesidad de usar código de sincronización}
+
+
+
+\subsubsection{Soporte software y hardware para sincronización}
+
+
+
+\subsubsection{Cerrojos}
+
+
+
+\subsubsection{Barreras}
+
+
+
+\subsubsection{Apoyo hardware a primitivas software}
 
 \end{document}
