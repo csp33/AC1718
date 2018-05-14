@@ -1448,16 +1448,110 @@ La comunicación de datos entre procesadores es relizada por el sistema de memor
 
 \subsubsection{Concepto de coherencia en el sistema de memoria:  situaciones de incoherencia y requisitos para evitar problemas en estos casos}
 
+Si en el sistema de memoria las copias de una dirección no tienen el mismo contenido, tendremos una \textbf{incoherencia en el sistema de memoria}. En sistemas con una sola caché se puede dar incoherencia entre la caché y la memoria principal. En sistemas con múltiples cachés la incoherencia se puede dar además entre las distintas cachés.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.8]{faltas_coherencia.png}
+\caption{Tipos de estructuras de datos y faltas de coherencia.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.8]{ej_incoherencia.png}
+\caption{Ejemplo de incoherencia.}
+\end{figure}
+
+\paragraph{Métodos de actualización de MP implementados en cachés.}
+
+\begin{itemize}
+	\item \textbf{Escritura inmediata} (\textit{write-through}). Cada vez que un procesador escribe en su caché escribe también en MP. Por tanto, cada escritura supone el uso de la red. No evita la incoherencias entre cachés.
+	\item \textbf{Posescritura} (\textit{write-back}). La escritura se realiza cuando el bloque que contiene la dirección modificada se elimina de la caché para alojar un nuevo bloque. Con la posescritura se posibilitan incoherencias de caché y MP.
+\end{itemize}
+
+La falta de coherencia entre cachés y los problemas de incoherencias se pueden solventar mediante hardware específico de coherencia. Existen alternativas para abordar las incoherencias entre caché y MP si el sistema no tiene hardware específico de mantenimiento de coherencia. Por ejemplo, se puede evitar la falta de coherencia declarando las zonas de memoria implicadas en la comunicación como \emph{no cacheables} o bien con escritura inmediata. \\
+
+Como ya hemos visto, en sistemas con múltiples cachés puede haber faltas de coherencia entre cachés, tanto con escritura inmediata como con posescritura. Los \textbf{protocolos de coherencia de caché} resuelven este problema haciendo que cada escritura sea visible a todos los procesadores, propagando de forma fiable un nuevo valor escrito en una dirección.
+
+\paragraph{Alternativas para propagar una escritura en protocolos de coherencia de caché.}
+
+\begin{itemize}
+	\item \textbf{Escritura con actualización} (\textit{write-update}). Cada vez quee un procesador escribe en una dirección en su caché, se escribe el nuevo dato en las copias de esa dirección de las otras cachés.
+	\item \textbf{Escritura con invalidación} (\textit{write-invalidate}). Antes de que un procesador modifique una dirección en su caché se invalidan las copias del bloque de la dirección en otras cachés. Cuando otro procesador quiera leer la información tendrá un fallo de caché, por lo que obtendrá el dato actualizado.
+\end{itemize}
+
+Hay que tener en cuenta que puedo ocurrir que la propagación de una escritura a todos los procesadores a través de la red de interconexión requiera un tiempo distinto para cada procesador. En ese caso, si se solaparan varias propagaciones, distintos procesadores podrían recibir y leer en distinto orden las escrituras, causando incoherencia.
+
+\paragraph{Requisitos del sistema de memoria para evitar incoherencias}
+
+\begin{itemize}
+	\item La escritura en una dirección debe hacerse visible en un tiempo finito a los otros procesadores.
+	\item Las escrituras en una misma dirección deben verse en el mismo orden por todos los procesadores. Es decir, las operaciones de escritura en la misma dirección se deben realizar en serie (una detrás de otra).
+\end{itemize}
 
 
-\subsubsection{Protocolos de mantenimiento de coherencia: clasificación y diseño}
+Las comunicaciones uno a muchos para actualizar o invalidar las copias del bloque que se modifica se pueden implementar en un bus, ya que permite la difusión de forma natural. En buses se utilizan \textbf{protocolos de espionaje (snoopy)}, que aprovechan que todos los componentes conectados al bus pueden ver (espiar) su contenido. El controlador de caché espía los parquetes en el bus y actúa en consecuencia (por ejemplo, invalidando o actualizando la copia que tienen de un bloque). \\
 
+En redes en las que la difusión es costosa de implementar o en las que se requiere una mayor escalabilidad se usan \textbf{esquemas basados en directorios}. En ellos se envían paquetes únicamente a las cachés implicadas para reducir el tráfico. La información sobre las cachés implicadas en cada momento se almacena en un directorio asociado a la memoria principal.\\
+
+Este directorio centralizado (monolítico), al igual que el bus, supone un cuello de botella. Podemos obtener mejores prestaciones si lo distribuimos entre los módulos de memoria principal. Es decir, el subdirectorio de cada módulo mantiene información de los bloques que conteien el módulo. Los diferentes subdirectorios procesan peticiones en paralelo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{directorio_mp.png}
+\caption{Directorio de memoria principal.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{tipos_directorios.png}
+\caption{Alternativas para implementar el directorio.}
+\end{figure}
+
+El hecho de que las operaciones de acceso a memoria tengan que llegar al directorio para obtener información de un bloque (cachés implicadas) permite usar el directorio para establecer un orden entre accesos a una misma dirección (serializar) de forma que todos los procesadores vean este mismo orden. No obstante, en algunos sistemas se pueden necesitar paquetes de reconocimiento de actualizaciones o invalidaciones que confirmen que ha finalizado una escritura anterior e información de estado para el bloque en el directorio (si está pendiente de finalizar un acceso).\\
+
+También se pueden encontrar esquemas de coherencia de caché organizados en \textbf{jerarquía} compuestos de protocolos de espionaje y directorios, según la red de cada nivel.
+
+\begin{itemize}
+	\item Protocolos de \textbf{espionaje} (\textit{snoopy}). Para buses y en general sistemas con difusión eficiente (pocos nodos o red que implementa difusión).
+	\item Protocolos basados en \textbf{directorios}. Para redes sin difusión o escalables.
+	\item Esquemas \textbf{jerárquicos}. Se usan para redes jerárquicas: jerarquía de buses, de redes escalables, redes escalables-buses, etc.
+\end{itemize}
+\captionof{figure}{Protocolos para mantener coherencia en el sistema de memoria.}
 
 
 \subsubsection{Protocolo MSI de espionaje}
 
+También se denomina protocolo de invalidación de tres estados. Utiliza posescritura y escritura con invalidación. \\
 
+Un bloque puede tener tres estados:
+\begin{itemize}
+	\item \textbf{Modificado} (M). Es la única copia válida del bloque en todo el sistema. La caché debe proporcionar el bloque si al espiar el bus observa que algún componente la solicita e invalidarlo si algún nodo solicita una copia exclusiva para su modificación.
+	\item \textbf{Compartido} (S). Todas las copias del bloque están actualizadas. La caché debe invalidar su copia si al espiar el bus observar que algún nodo solicita una copia exclusiva del bloque para su invalidación.
+	\item \textbf{Inválido} (I). El bloque se ha invalidado o bien no se encuentra físicamente en caché.
+\end{itemize}
 
+Por su parte, un bloque puede ser:
+
+\begin{itemize}
+	\item \textbf{Válido}. Tiene una copia válida. Es decir, el controlador puede proporcionar el bloque en caso de solicitud.
+	\item \textbf{Inválido}. La copia no es la última actualización, es decir, hay una caché que ha modificado el bloque (estado modificado).
+\end{itemize}
+
+Un nodo terminal puede generar las siguientes transferencias como consecuencia de acciones de lectura/escritura en la caché del procesador o bien como consecuencia de paquetes recibidos de otros nodos:
+
+\begin{itemize}
+	\item Petición de lectura de un bloque (\textbf{PtLec}). Un procesador lee de una dirección que no se encuentra en su caché (fallo de caché). El controlador inicia la transacción poneidno en el bus la dirección a la que desea acceder. El sistema de memoria proporcionará el bloque donde se encuentra la dirección solicitada.
+	\item Petición de acceso exclusivo (\textbf{PtLecEx}). Se genera por la escritura de un procesador (PrEsc) en un bloque compartido o inválido. El controlador de caché genera el paquete que indicará la dirección en la que se desea escribir. El resto de cachés con copias válidas las invalidarán. También se invalidará el bloque en memoria si se encuentra en estado válido. El procesador puede solicitar una confirmación de este paquete.
+	\item Petición de posescritura (\textbf{PtPEsc}). Se genera por el reemplazo de un bloque modificado debido a un fallo de caché (se sobreescribe el bloque con estado modificado). El procesador del nodo no conoce este hecho y no espera respuesta.
+	\item Respuesta con bloque (\textbf{RpBloque}). La genera un nodo que observa en el bus una petición de un bloque que tiene en estado modificado solicitada por una petición de lectura (exclusiva o no).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{msi.png}
+\caption{Descripción de MSI.}
+\end{figure}
 
 \subsubsection{Protocolo MESI de espionaje}
 

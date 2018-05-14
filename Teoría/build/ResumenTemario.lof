@@ -44,3 +44,9 @@
 \contentsline {figure}{\numberline {42}{\ignorespaces Alternativas en multicores (se emiten instrucciones de distintos threads en cada ciclo).\relax }}{46}{figure.caption.92}
 \contentsline {figure}{\numberline {43}{\ignorespaces Hardware y arquitecturas TLP en un chip.\relax }}{46}{figure.caption.93}
 \contentsline {figure}{\numberline {44}{\ignorespaces Sistema de memoria.\relax }}{47}{figure.caption.94}
+\contentsline {figure}{\numberline {45}{\ignorespaces Tipos de estructuras de datos y faltas de coherencia.\relax }}{48}{figure.caption.95}
+\contentsline {figure}{\numberline {46}{\ignorespaces Ejemplo de incoherencia.\relax }}{48}{figure.caption.96}
+\contentsline {figure}{\numberline {47}{\ignorespaces Directorio de memoria principal.\relax }}{50}{figure.caption.100}
+\contentsline {figure}{\numberline {48}{\ignorespaces Alternativas para implementar el directorio.\relax }}{50}{figure.caption.101}
+\contentsline {figure}{\numberline {49}{\ignorespaces Protocolos para mantener coherencia en el sistema de memoria.\relax }}{50}{figure.49}
+\contentsline {figure}{\numberline {50}{\ignorespaces Descripci\IeC {\'o}n de MSI.\relax }}{52}{figure.caption.102}

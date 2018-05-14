@@ -79,18 +79,20 @@
 \contentsline {subsubsection}{\numberline {3.1.5}Hardware y arquitecturas TLP en un chip}{46}{subsubsection.3.1.5}
 \contentsline {subsection}{\numberline {3.2}Coherencia del sistema de memoria}{47}{subsection.3.2}
 \contentsline {subsubsection}{\numberline {3.2.1}Sistema de memoria en multiprocesadores}{47}{subsubsection.3.2.1}
-\contentsline {subsubsection}{\numberline {3.2.2}Concepto de coherencia en el sistema de memoria: situaciones de incoherencia y requisitos para evitar problemas en estos casos}{48}{subsubsection.3.2.2}
-\contentsline {subsubsection}{\numberline {3.2.3}Protocolos de mantenimiento de coherencia: clasificaci\IeC {\'o}n y dise\IeC {\~n}o}{48}{subsubsection.3.2.3}
-\contentsline {subsubsection}{\numberline {3.2.4}Protocolo MSI de espionaje}{48}{subsubsection.3.2.4}
-\contentsline {subsubsection}{\numberline {3.2.5}Protocolo MESI de espionaje}{48}{subsubsection.3.2.5}
-\contentsline {subsubsection}{\numberline {3.2.6}Protocolo MSI basado en directorios con o sin difusi\IeC {\'o}n}{48}{subsubsection.3.2.6}
-\contentsline {subsection}{\numberline {3.3}Consistencia del sistema de memoria}{48}{subsection.3.3}
-\contentsline {subsubsection}{\numberline {3.3.1}Conecpto de consistencia de memoria}{48}{subsubsection.3.3.1}
-\contentsline {subsubsection}{\numberline {3.3.2}Consistencia secuencial}{48}{subsubsection.3.3.2}
-\contentsline {subsubsection}{\numberline {3.3.3}Modelos de consistencia relajados}{48}{subsubsection.3.3.3}
-\contentsline {subsection}{\numberline {3.4}Sincronizaci\IeC {\'o}n}{48}{subsection.3.4}
-\contentsline {subsubsection}{\numberline {3.4.1}Comunicaci\IeC {\'o}n en multiprocesadores y necesidad de usar c\IeC {\'o}digo de sincronizaci\IeC {\'o}n}{48}{subsubsection.3.4.1}
-\contentsline {subsubsection}{\numberline {3.4.2}Soporte software y hardware para sincronizaci\IeC {\'o}n}{48}{subsubsection.3.4.2}
-\contentsline {subsubsection}{\numberline {3.4.3}Cerrojos}{48}{subsubsection.3.4.3}
-\contentsline {subsubsection}{\numberline {3.4.4}Barreras}{48}{subsubsection.3.4.4}
-\contentsline {subsubsection}{\numberline {3.4.5}Apoyo hardware a primitivas software}{48}{subsubsection.3.4.5}
+\contentsline {subsubsection}{\numberline {3.2.2}Concepto de coherencia en el sistema de memoria: situaciones de incoherencia y requisitos para evitar problemas en estos casos}{47}{subsubsection.3.2.2}
+\contentsline {paragraph}{M\IeC {\'e}todos de actualizaci\IeC {\'o}n de MP implementados en cach\IeC {\'e}s.}{48}{section*.97}
+\contentsline {paragraph}{Alternativas para propagar una escritura en protocolos de coherencia de cach\IeC {\'e}.}{48}{section*.98}
+\contentsline {paragraph}{Requisitos del sistema de memoria para evitar incoherencias}{49}{section*.99}
+\contentsline {subsubsection}{\numberline {3.2.3}Protocolo MSI de espionaje}{51}{subsubsection.3.2.3}
+\contentsline {subsubsection}{\numberline {3.2.4}Protocolo MESI de espionaje}{52}{subsubsection.3.2.4}
+\contentsline {subsubsection}{\numberline {3.2.5}Protocolo MSI basado en directorios con o sin difusi\IeC {\'o}n}{52}{subsubsection.3.2.5}
+\contentsline {subsection}{\numberline {3.3}Consistencia del sistema de memoria}{52}{subsection.3.3}
+\contentsline {subsubsection}{\numberline {3.3.1}Conecpto de consistencia de memoria}{52}{subsubsection.3.3.1}
+\contentsline {subsubsection}{\numberline {3.3.2}Consistencia secuencial}{52}{subsubsection.3.3.2}
+\contentsline {subsubsection}{\numberline {3.3.3}Modelos de consistencia relajados}{52}{subsubsection.3.3.3}
+\contentsline {subsection}{\numberline {3.4}Sincronizaci\IeC {\'o}n}{52}{subsection.3.4}
+\contentsline {subsubsection}{\numberline {3.4.1}Comunicaci\IeC {\'o}n en multiprocesadores y necesidad de usar c\IeC {\'o}digo de sincronizaci\IeC {\'o}n}{52}{subsubsection.3.4.1}
+\contentsline {subsubsection}{\numberline {3.4.2}Soporte software y hardware para sincronizaci\IeC {\'o}n}{52}{subsubsection.3.4.2}
+\contentsline {subsubsection}{\numberline {3.4.3}Cerrojos}{52}{subsubsection.3.4.3}
+\contentsline {subsubsection}{\numberline {3.4.4}Barreras}{52}{subsubsection.3.4.4}
+\contentsline {subsubsection}{\numberline {3.4.5}Apoyo hardware a primitivas software}{52}{subsubsection.3.4.5}
