@@ -18,6 +18,7 @@
 \usepackage{array}
 \graphicspath{ {./img/} {../../LaTeX/img/}}
 \selectlanguage{spanish}
+\usepackage[nottoc]{tocbibind}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
@@ -1258,8 +1259,6 @@ donde:
 \end{itemize}
 
 
-\subsubsection{Ejercicios}
-
 \newpage
 
 \section{Tema 3}
@@ -1578,32 +1577,214 @@ Los posibles estados de un bloque son:
 
 \subsubsection{Protocolo MSI basado en directorios con o sin difusión}
 
+\paragraph{MSI con directorios sin difusión}
 
+Un bloque en caché puede tener tres estados distintos: \textbf{modificado} (M), \textbf{compartido} (C) o \textbf{inválido} (I).\\
 
+Un bloque en MP puede ser \textbf{válido} o \textbf{inválido}.\\
 
+Hay varios tipos de nodos: \textbf{solicitante} (S), origen (O), modificado (M), propietario (P) y compartidor (C).
 
+Si un nodo \textbf{S} realiza una petición a un nodo \textbf{O}, la petición puede ser:
+
+\begin{itemize}
+	\item Lectura de bloque (\textbf{PtLec}).
+	\item Lectura con acceso exclusivo (\textbf{PtLecEx}).
+	\item Petición de acceso exclusivo sin lectura (\textbf{PtEx}).
+	\item Posescritura (\textbf{PtPEsc}).
+\end{itemize}
+
+Los nodos \textbf{O} pueden reeviar a los nodos con copia (\textbf{P},\textbf{M} o \textbf{C}) varias peticiones: invalidación (\textbf{RvInv}) o lectura (\textbf{RvLec} o \textbf{RvLecEx}).\\
+
+También pueden recibir respuestas:
+\begin{itemize}
+	\item Nodo \textbf{P} a \textbf{O}: respuesta con bloque (\textbf{RpBloque}) o respuesta con/sin bloque confirmando invalidación (\textbf{RpInv}, \textbf{RpBloqueInv}).
+	\item Nodo \textbf{O} a \textbf{S}: respuesta con bloque (\textbf{RpBloque}), respuesta con o sin bloque confirmando fin de invalidación (\textbf{RpInv},\textbf{RpBloqueInv}).
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{msi_dir_nodif.png}
+\caption{MSI con directorios sin difusión.}
+\end{figure}
+
+\paragraph{MSI con directorios con difusión}
+
+Un bloque en caché puede tener tres estados distintos: \textbf{modificado} (M), \textbf{compartido} (C) o \textbf{inválido} (I).\\
+
+Un bloque en MP puede ser \textbf{válido} o \textbf{inválido}.\\
+
+Hay varios tipos de nodos: \textbf{solicitante} (S), origen (O), modificado (M), propietario (P) y compartidor (C).\\
+
+Difusión de petición del nodo S a:
+\begin{itemize}
+	\item \textbf{O} y \textbf{P}: lectura de un bloque (\textbf{PtLec}), lectura con acceso exclusivo (\textbf{PtLecEx}), petición de acceso exclusivo sin lectura(\textbf{PtEx}).
+	\item \textbf{O}: posescritura (\textbf{PtPEsc}).
+\end{itemize}
+
+Respuesta de:
+
+\begin{itemize}
+	\item Nodo \textbf{P} a \textbf{O}: respuesta con bloque (\textbf{RpBloque}) o respuesta con/sin bloque confirmando invalidación (\textbf{RpInv}, \textbf{RpBloqueInv}).
+	\item Nodo \textbf{O} a \textbf{S}: respuesta con bloque (\textbf{RpBloque}), respuesta con o sin bloque confirmando fin de invalidación (\textbf{RpInv}
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{msi_dir_dif.png}
+\caption{MSI con directorios con difusión.}
+\end{figure}
 
 \subsection{Consistencia del sistema de memoria}
 
 \subsubsection{Concepto de consistencia de memoria}
 
+Un \textbf{modelo de consistencia de memoria} especifica el orden el el cual las operaciones de aceso a memoria (lectura/escritura) deben \textit{parecer} haberse realizado.\\
 
-
+La coherencia sólo abarca operaciones realizadas por múltiples componentes (procesos o procesadores) sobre una misma dirección.\\
 
 
 \subsubsection{Consistencia secuencial}
 
+En un sistema uniprocesador, este orden es el orden secuencial ejecutado por el programador, denominado \textbf{orden del programa}. Sin embargo, el hardware o el compilador pueden alterar el orden de las instrucciones para mejorar prestaciones, pero debe parecer que no se ha alterado para garantizar el modelo de consistencia al programador. En concreto, se debe garantizar que:
+
+\begin{itemize}
+	\item Cada lectura de una dirección proporcione el último valor escrito en esa ddirección (dependencia RAW).
+	\item Si se escribe varias veces en una dirección se debe retornar el último valor escrito (dependencia WAW).
+	\item Si se escribe en una dirección que ha sido previamente leída, no se debe obtener en la lectura previa el valor escrito posteriormente (dependencia WAR).
+	\item No se puede escribir en una dirección si la escritura depende de una condición que no se cumple (dependencias de control).
+\end{itemize}
+
+El \textbf{modelo de consistencia secuencial (SC)} requiere que todas las operaciones de memoria parezcan ser ejecutadas una cada vez (ejecución \emph{atómica}) y que todas las operaciones de un único procesador o proceso parezcan ejecutarse en eel \emph{orden descrito} por el programa de entrada al procesador.\\
+
+El modelo de consistencia secuencial es el que suele esperar el programador a alto nivel, ya que presenta el sistema de memoria como una memoria global conectada a todos los procesadores a través de un conmutador central.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{modelo_sc.png}
+\caption{Presentación del sistema a los programadores mediante el modelo SC.}
+\end{figure}
+
+\paragraph{Ejemplo} Supongamos que disponemos del siguiente código:
+\begin{minted}[linenos]{c++}
+P1{
+	A=1;	//Escribir A
+	K=1;	//Escribir K
+}
+/*******************/
+P2{
+	while(k==0){}	//Leer K
+	var=A;	//Leer A
+}
+\end{minted}
 
 
-
-
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{ej_sc.png}
+\caption{Ejemplo de ejecución con SC.}
+\end{figure}
 
 \subsubsection{Modelos de consistencia relajados}
 
+Los modelos de memoria relajados difieren en cuanto a los requisitos para garantizar conssitencia secuencial (SC) relajan:
+\begin{itemize}
+	\item \textbf{Orden del programa}. Pueden permitir que en el código ejecutado en un procesador se relaje el orden entre dos accesos a distintas direcciones. Pueden permitir relajar distintos órdenes: $W \rightarrow W$,$W \rightarrow R$ , $R \rightarrow W$ o $R \rightarrow R$.
+	\item \textbf{Atomicidad}. Hay modelos que permiten que un procesador pueda leer el valor escrito por otro procesador antes de que la escritura se haga visible al resto.
+\end{itemize}
+
+Los modelos relajados de consistencia hardware comprenden:
+
+\begin{itemize}
+	\item Especificaciones sobre los órdenes de acceso a memoria que no garantiza el sistema de memoria (tanto órdenes de un mismo procesador como atomicidad en las ecrituras).
+	\item Mecanismos que ofrece el hardware para forzar de forma explícita un orden (que no esté garantizado) cuando sea necesario.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{ej_relajados.png}
+\caption{Ejemplos de modelos relajados.}
+\end{figure}
+
+\paragraph{Modelos que relajan $W \rightarrow R$\\}
+
+Estos modelos permiten que las lecturas adelanten a las escrituras, pero evitando problemas de dependencias RAW. Por tanto, eliminan la ordenación $W \rightarrow R$, lo que permiote ocultar las latencias de escritura. Con esta relajación la mayor parte de los códigos SC funcionan correctamente. Cuando sea necesario se podrán usar instrucciones específicas de serialización.\\
+
+Estos modelos los implementan procesadores que utilizan buffer de escritura FIFO para permitir que los accesos a memoria de escritura no retarden la ejecución del código bloqueando lecturas posteriores. Además, de forma general, permiten que el procesador pueda obtener directamente el valor de una lectura del buffer de escritura, permitiendo que el procesador pueda leer antes que el resto una escritura propia.\\
+
+Al utilizar estos buffers, las escrituras de un procesador no se verán inmediatamente por otros procesadores. Pero, cuando se vean, lo harán respetando el orden del programa.\\
+
+Hay sistemas en los que se permite que un procesador pueda leer la escritura de otro antes que el resto (acceso no atómico). Para garantizar acceso atómico se pueden usar instrucciones de lectura/escritura/modificación atómicas.
 
 
+\paragraph{Modelos que relajan $W \rightarrow R$ y $W \rightarrow W$\\}
 
+Estos modelos, además, relajan el orden entre escrituras (a distintas direcciones), eliminando por tanto los órdenes $W \rightarrow R$ y $W \rightarrow W$. Así, por ejemplo, estos modelos permiten que el hardware (como la red de interconexión) solape escrituras a memoria a distintas direcciones, de forma que puedan llegar a la memoria o a cachés de otros procesadores fuera del orden del programa.\\
 
+En sistemas con este modelo se proporciona harware para garantizar los dos órdenes ( por ejemplo, \textit{Sun Sparc}).\\
+
+Hay casos en los que estos modelos no se comportan como SC. Por ejemplo:
+
+\begin{minted}[linenos]{c++}
+P1{
+	A=1;	//Escribir A
+	K=1;	//Escribir K
+}
+/*******************/
+P2{
+	while(k==0){}	//Leer K
+	var=A;	//Leer A
+}
+\end{minted}
+
+\paragraph{Modelos que relajan cualquier reordenación entre escrituras y lecturas)\\}
+
+Estos modelos relajan todos los órdenes ($W \rightarrow W$,$W \rightarrow R$ , $R \rightarrow W$ y $R \rightarrow R$). Se cambia el orden siempre que no haya conflictos entre los accesos implicados (es decir, se mantiene la consistencia en el procesador evitando problemas por dependencias de datos o control). \\
+
+Dentro de este grupo se encuentra, el \textbf{modelo de ordenación débil} yel de \textbf{consistencia de liberación}.\\
+
+El \textbf{modelo de ordenación débil} se basa en mantener el orden entre accesos sólo en los puntos de sincronización del código. Este modelo tiene en cuenta que cuando se necesita coordinar el acceso  a una variable compartida (para permitir la comunicación entre procesos) se añade código extra de sincronización.\\
+
+Las operaciones de memoria se clasifican en dos: de datos y de sincronización. Para forzar el orden entre dos operaciones, el programaador debe etiquetar alguna de ellas como operación de sincronización. Si S es una operación de sincronización (liberación o adquisición), el modelo gaantiza los siguientes órdenes:
+\begin{itemize}
+	\item Las operaciones de acceso a memoria anteriores en el orden del programa a una operación de sincronización deben completarse antes de ésta ($WR \rightarrow S$).
+	\item Una operación de sincronización se debe completar antes que las operaciones de acceso a memoria posteriores ($S \rightarrow WR$).
+\end{itemize}
+
+\begin{minted}[linenos]{c++}
+	for(i=iproc; i<n ; i+=nproc)
+		sump+=a[i];
+	lock(k);	//1 -> Adquisición. (isync) (membar) (dmb)
+		sum+=sump;	//2 -> SC
+	unlock(k);	//3 -> Liberación.	(sync) (membar) (dmb)
+\end{minted}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{ejemplo_debil.png}
+\caption{Ejemplo de modelo de ordenación débil.}
+\end{figure}
+
+El \textbf{modelo de consistencia de liberación} además tiene en cuenta que hay dos tipos de código utilizado en el proceso de sincronización: el que se ejecuta para adquirir el acceso por un único proceso y el que se ejecuta para que un proceso de permiso a otro para acceder a las variables o recursos compartidos. Por tanto, este modelo distingue entre dos tipos de operaciones de sincronización: \textbf{adquisición} y \textbf{liberación}.\\
+
+Si SA es una operación de adquisición y SL de liberación, este modelo mantiene los siguientes órdenes:
+
+\begin{itemize}
+	\item Entre una operación de adquisición y cualquier otra posterior ($SA \rightarrow WR$).
+	\item Entre cualquier operación de acceso a memoria y una operación de liberación posterior ($WR \rightarrow SL$)
+\end{itemize}
+
+\begin{minted}[linenos]{c++}
+	for(i=iproc; i<n ; i+=nproc)
+		sump+=a[i];
+	lock(k);	//1 -> Adquisición. (.acq) (lda)
+		sum+=sump;	//2 -> SC
+	unlock(k);	//3 -> Liberación.	(.rel) (stl) 
+\end{minted}
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{ejemplo_liberacion.png}
+\caption{Ejemplo de modelo de consistencia de liberación.}
+\end{figure}
 
 
 \subsection{Sincronización}
@@ -1611,20 +1792,271 @@ Los posibles estados de un bloque son:
 
 \subsubsection{Comunicación en multiprocesadores y necesidad de usar código de sincronización}
 
+La comunicación entre procesos en multiprocesadores se realiza como en los sistemas uniprocesador, a través de la memoria compartida. Para poder implementar de forma efectiva la comunicación entre procesos a través de variables compartidas, se necesita sincronizar el acceso a las variables compartidas entre los procesos del grupo que intervienen en la comunicación.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{comunicacion.png}
+\caption{Comunicación en un procesador.}
+\end{figure}
+
+\begin{itemize}
+	\item \textbf{Comunicación uno-a-uno}. Se deben sincronizar los dos procesos que intervienen para garantizar que el proceso que recibe (leyendo de una variable compartida) no acceda a ella antes de que el proceso emisor escriba el dato. Además, si la variable se utiliza varias veces (por ejemplo en un bucle), hay que garantizar que no se envía un nuevo dato a través de la variable hasta que no se haya recibido el anterior. En definitiva, se necesita un mecanismo que garantice la exclusión mutua (sólo un proceso puede acceder en un momento dado a una dirección compartida). Una \textbf{sección crítica} es una secuencia de instrucciones que se deben ejecutar en exclusión mutua.
+	\item \textbf{Comunicación colectiva}. En este caso hay que coordinar el acceso de múltiples procesos a una variable compartida, de forma que escriban uno tras otro (sin interferencias entre ellos) o lean cuando tengan disponibles los resultados definitivos. Puede haber uno o varios procesos emisores y uno o varios receptores. No obstante, para garantizar que no interfieran se necesita un acceso en \textbf{exclusión mutua}. Además debe garantizarse que no se accede al resultado hasta que todos los involucrados hayan ejecutado su sección crítica.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{ej_uno_a_uno.png}
+\caption{Comunicación uno-a-uno.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{ej_colectiva.png}
+\caption{Comunicación colectiva.}
+\end{figure}
+
+En el ejemplo de comunicación colectiva, el acceso a \textit{sum} (lectura-modificación-escritura) se debe realizar en exclusión mutua. Para ello podemos usar \emph{cerrojos}. Además, el proceso 0 no debería imprimir hasta que no haya terminado el bucle. Para ello, usaremos \emph{barreras}.
+
 
 
 \subsubsection{Soporte software y hardware para sincronización}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{soporte_sincro.png}
+\caption{Soporte software y hardware para sincronización.}
+\end{figure}
+
+Se pueden utilizar varias primitivas para realizar la lectura-modificación-escritura atómica:
+
+\begin{itemize}
+	\item \textbf{Test\&Set}. Realiza de forma atómica sobre una variable compartida \emph{x} las siguientes acciones:
+		\begin{enumerate}
+			\item Lee en una variable local el contenido actual de \emph{x}.
+			\item Escribe un 1 en \emph{x}.
+			\item Devuelve el contenido de la variable local (anterior valor de \emph{x}).
+		\end{enumerate}
+		Se puede implementar con una instrucción de intercambio (\emph{xchg}).
+	\item \textbf{Intercambio}. Es más general que Test\&Set, ya que permite almacenar cualquier valor en la variable compartida. Se puede implementar con \emph{xchg}.
+	\item \textbf{Fetch\&Operation} (Fetch\&Add, Fetch\&Or...):
+		\begin{enumerate}
+			\item Lee en una variable local el contenido de \emph{x} (valor que devolverá).
+			\item Escribe en \emph{x} el resultado de realizar la operación entre \emph{x} y el otro valor pasado.
+		\end{enumerate}
+		Se puede implementar con la instrucción \emph{lock xadd}.
+		\item \textbf{Compare\&Swap}. 
+		\begin{enumerate}
+			\item Lee el contenido de \emph{x}.
+			\item Si coincide con \emph{a}, intercambia \emph{x} con \emph{b}
+		\end{enumerate}
+		Se puede implementar mediante la instrucción \emph{lock cmpxchg}.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{minted}[linenos]{c++}
+Test&Set(x){
+	temp=x;
+	x=1;
+	return temp;
+}
+\end{minted}
+\caption{Test\&Set}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minted}[linenos]{c++}
+Fetch&Add(x,a){
+	temp=x;
+	x=x+a;
+	return temp;
+}
+\end{minted}
+\caption{Fetch\&Add}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\begin{minted}[linenos]{c++}
+Compare&Swap)(a,b,x){
+	if(a==x)
+		swap(x,b);
+}
+\end{minted}
+\caption{Compare\&Swap}
+\end{figure}
 
 
 
 \subsubsection{Cerrojos}
 
+Los cerrojos proporcionan una forma de asegurar exclusión mutua, es decir, que un sólo proceso acceda en un momento dado a una variable debido a que se encuentra en sección crítica. Utilizan dos funciones para sincronizar:
+\begin{itemize}
+	\item \textbf{Cierre del cerrojo, lock(k)}. Un proceso intenta adquirir el derecho a acceder a una sección crítica. Si varios la intentan, solo uno debe adquirirla mientras que los otros deben esperar. Todos los procesos que ejecuten \emph{lock()} mientras el cerrojo esté cerrado deben quedar esperando.
+	\item \textbf{Apertura del cerrojo, unlock(k)}. Libera a uno de los procesos que se encuentran esperando a una sección crítica. En caso de no haber procesos en espera, permite que el siguiente proceso que solicite el cierre lo adquiera y no tenga que esperar.
+\end{itemize}
 
+\begin{figure}[H]
+\centering
+\begin{minted}[linenos]{c++}
+for(i=ithread ; i<n; i+=ithread)
+	sump+=a[i];
+lock(k);	//Adquiero EM
+sum+=sump;	//SC
+unlock(k);	//Libero EM
+\end{minted}
+\caption{Ejemplo de cerrojo}
+\end{figure}
+
+Hay dos posibles implementaciones del mecanismo de espera:
+
+\begin{itemize}
+	\item \textbf{Espera ocupada}. El proceso se queda ejecutando un ciclo en el que consulta constantemente si se le permite pasar.
+	\item \textbf{Bloqueo}. El proceso queda suspendido, dejando el procesador a otro proceso.
+\end{itemize}
+
+\paragraph{Cerrojo simple\\}
+
+Se puede implementar con una variable compartida \emph{k} que tome dos valores: abierto(0) o cerrado(1). La apertura (\textbf{unlock}) escribirá un 0 y el cierre (\textbf{lock}) escribirá un 1. Estas operaciones deben ser \textbf{atómicas}.
+
+\paragraph{Cerrojos con etiqueta\\}
+
+Estos cerrojos fijan un orden FIFO para que los procesos adquieran el cerrojo. Por tanto, el primer proceso que solicite el cerrojo será el primero en obtenerlo.
 
 \subsubsection{Barreras}
 
+Se utilizan para sincronizar entre sí, en algún punto del código, los procesos que colaboran en la ejecución de un trozo del mismo. De esta forma podemos garantizar que ningún proceso sobrepasa un punto determinado del código hasta que todos lleguen ahí.\\
 
+La barrera irá contando todos los procesos que vayan llegando. Una vez que este valor sea igual al número de procesos, los liberará.
 
 \subsubsection{Apoyo hardware a primitivas software}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{cerrojos_test_set.png}
+\caption{Cerrojos con Test\&Set.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{cerrojos_fetch_or.png}
+\caption{Cerrojos con Fetch\&Or.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{cerrojos_compare_swap.png}
+\caption{Cerrojos con Compare\&Swap.}
+\end{figure}
+
+
+\begin{figure}[H]
+\centering
+\begin{minted}[linenos]{c++}
+for(i=ithread ; i<n; i+=ithread)
+	sump+=a[i];
+fetch&add(sum,sump);
+\end{minted}
+\caption{Suma con Fetch\&Add.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{minted}[linenos]{c++}
+for(i=ithread ; i<n; i+=ithread)
+	sump+=a[i];
+do{
+	a=sum;
+	b=a+sump;
+	compare&swap(a,b,sum);
+while(a!=b);
+\end{minted}
+\caption{Suma con Compare\&Swap.}
+\end{figure}
+
+\subsection{Ejercicios}
+
+\begin{enumerate}
+	\item En un multiprocesador NUMA con 16nodos 4GBytes por nodo , y líneas de cache de 64 Bytes. ¿Cuántas entradas tiene el directorio de memoria utilizado en cada nodo para mantener la coherencia de cache en un protocolo MSI sin difusión?
+	\begin{solution}
+		$4GB=2^2 \cdot 2^{30} B=2^{32}B$
+		\[64B= 2^6 B\]
+		\[\frac{2^{32}B}{2^6B}=2^{26}\text{ entradas}\]
+	\end{solution}
+	\item En el multiprocesador NUMA de la pregunta anterior, ¿ cuántos bits tiene cada entrada del directorio que se usa para mantener la coherencia de caché?
+	\begin{solution}
+		$16\text{ nodos} + 1bit_{estado}=17\text{ bits}$
+	\end{solution}
+	\item ¿Qué valores puede tomar R si el modelo de consistencia del computador no respeta el orden $W \rightarrow W$ (los demás sí) e inicialmente X=Y=0?
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}[b]{0.25\textwidth}
+\begin{minted}[linenos, fontsize=\footnotesize]{c++}
+P1{
+	X=2; // (a)
+	Y=1; //(b)
+}
+\end{minted}
+\end{subfigure}
+\quad
+\begin{subfigure}[b]{0.25\textwidth}
+\begin{minted}[linenos, fontsize=\footnotesize]{c++}
+P2{
+	R=1; //(c)
+	if(Y==1) R=X; //(d)
+}
+\end{minted}
+\end{subfigure}
+\end{figure}
+\begin{solution}
+	Los posibles valores son 0,1 y 2. Veamos cuales se pueden obtener:
+	\begin{itemize}
+		\item 0: a$\rightarrow$d$\rightarrow$c$\rightarrow$b.
+		\item 1: c$\rightarrow$a$\rightarrow$d$\rightarrow$b.
+		\item 2: a$\rightarrow$b$\rightarrow$c$\rightarrow$d.
+	\end{itemize}
+	Por tanto, se cumplen todos.\\
+	Si se respetara $W \rightarrow W$, los valores posibles serían 1 y 2.
+\end{solution}
+	\item ¿Qué valor deben tener r1,r2 y r3 para que este código implemente la función lock(k) de un cerrojo? (0=abierto, 1=cerrado).
+	\begin{figure}[H]
+\centering
+\begin{minted}[linenos, fontsize=\footnotesize]{c++}
+lock(k){
+	b=r1;
+	do{
+		compare&swap(r2,b,k); /si r2==k, k y b se intercambian.
+	while(b==r3);
+\end{minted}
+\begin{solution}
+Comenzamos la deducción.
+	\begin{itemize}
+		\item Si vamos a cerrar el cerrojo, debe estar abierto (0). Es decir, en compare\&swap el valor del cerrojo debe ser 0. Por tanto, \textbf{r2=0}.
+		\item Para cerrarlo, debemos asignar el valor 1. Fijandonos de nuevo en compare\&swap vemos que \textbf{b=1 $\rightarrow$ r1=1}.
+		\item Por último, la comprobación del bucle. Se debe esperar (espera ocupada) mientras que el cerrojo no cambie su estado (b se intercambie con k). Por tanto, como \textbf{b=1 $\rightarrow$ r3=1}.
+	\end{itemize}
+\end{solution}
+\end{figure}
+\end{enumerate}
+
+
+\begin{thebibliography}{9}
+
+\bibitem{libroteoria} 
+Julio Ortega, Mancia Anguita, Antonio Prieto. 
+\textit{Arquitectura de computadores}. 
+Thomson, 2006.
+ 
+\bibitem{transparencias} 
+Julio Ortega, Mancia Anguita. 
+\textit{Transparencias de teoría}. \\
+\texttt{\url{http://www.swad.ugr.es}}, 2018.
+
+\end{thebibliography}
 
 \end{document}

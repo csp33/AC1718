@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{lock}\PYG{p}{(}\PYG{n}{k}\PYG{p}{)\PYGZob{}}
+	\PYG{n}{b}\PYG{o}{=}\PYG{n}{r1}\PYG{p}{;}
+	\PYG{k}{do}\PYG{p}{\PYGZob{}}
+		\PYG{n}{compare}\PYG{o}{\PYGZam{}}\PYG{n}{swap}\PYG{p}{(}\PYG{n}{r2}\PYG{p}{,}\PYG{n}{b}\PYG{p}{,}\PYG{n}{k}\PYG{p}{);} \PYG{o}{/}\PYG{n}{si} \PYG{n}{r2}\PYG{o}{==}\PYG{n}{k}\PYG{p}{,} \PYG{n}{k} \PYG{n}{y} \PYG{n}{b} \PYG{n}{se} \PYG{n}{intercambian}\PYG{p}{.}
+	\PYG{k}{while}\PYG{p}{(}\PYG{n}{b}\PYG{o}{==}\PYG{n}{r3}\PYG{p}{);}
+\end{Verbatim}

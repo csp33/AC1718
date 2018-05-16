@@ -1,0 +1,9 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k}{for}\PYG{p}{(}\PYG{n}{i}\PYG{o}{=}\PYG{n}{ithread} \PYG{p}{;} \PYG{n}{i}\PYG{o}{\PYGZlt{}}\PYG{n}{n}\PYG{p}{;} \PYG{n}{i}\PYG{o}{+=}\PYG{n}{ithread}\PYG{p}{)}
+	\PYG{n}{sump}\PYG{o}{+=}\PYG{n}{a}\PYG{p}{[}\PYG{n}{i}\PYG{p}{];}
+\PYG{k}{do}\PYG{p}{\PYGZob{}}
+	\PYG{n}{a}\PYG{o}{=}\PYG{n}{sum}\PYG{p}{;}
+	\PYG{n}{b}\PYG{o}{=}\PYG{n}{a}\PYG{o}{+}\PYG{n}{sump}\PYG{p}{;}
+	\PYG{n}{compare}\PYG{o}{\PYGZam{}}\PYG{n}{swap}\PYG{p}{(}\PYG{n}{a}\PYG{p}{,}\PYG{n}{b}\PYG{p}{,}\PYG{n}{sum}\PYG{p}{);}
+\PYG{k}{while}\PYG{p}{(}\PYG{n}{a}\PYG{o}{!=}\PYG{n}{b}\PYG{p}{);}
+\end{Verbatim}

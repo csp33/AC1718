@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+	\PYG{k}{for}\PYG{p}{(}\PYG{n}{i}\PYG{o}{=}\PYG{n}{iproc}\PYG{p}{;} \PYG{n}{i}\PYG{o}{\PYGZlt{}}\PYG{n}{n} \PYG{p}{;} \PYG{n}{i}\PYG{o}{+=}\PYG{n}{nproc}\PYG{p}{)}
+		\PYG{n}{sump}\PYG{o}{+=}\PYG{n}{a}\PYG{p}{[}\PYG{n}{i}\PYG{p}{];}
+	\PYG{n}{lock}\PYG{p}{(}\PYG{n}{k}\PYG{p}{);}	\PYG{c+c1}{//1 \PYGZhy{}\PYGZgt{} Adquisición. (.acq) (lda)}
+		\PYG{n}{sum}\PYG{o}{+=}\PYG{n}{sump}\PYG{p}{;}	\PYG{c+c1}{//2 \PYGZhy{}\PYGZgt{} SC}
+	\PYG{n}{unlock}\PYG{p}{(}\PYG{n}{k}\PYG{p}{);}	\PYG{c+c1}{//3 \PYGZhy{}\PYGZgt{} Liberación.	(.rel) (stl)}
+\end{Verbatim}

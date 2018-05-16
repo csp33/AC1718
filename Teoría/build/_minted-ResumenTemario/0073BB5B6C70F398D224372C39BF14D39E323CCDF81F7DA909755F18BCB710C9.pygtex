@@ -1,0 +1,7 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{Fetch}\PYG{o}{\PYGZam{}}\PYG{n}{Add}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,}\PYG{n}{a}\PYG{p}{)\PYGZob{}}
+	\PYG{n}{temp}\PYG{o}{=}\PYG{n}{x}\PYG{p}{;}
+	\PYG{n}{x}\PYG{o}{=}\PYG{n}{x}\PYG{o}{+}\PYG{n}{a}\PYG{p}{;}
+	\PYG{k}{return} \PYG{n}{temp}\PYG{p}{;}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

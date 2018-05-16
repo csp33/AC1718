@@ -1,0 +1,11 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{P1}\PYG{p}{\PYGZob{}}
+	\PYG{n}{A}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{;}	\PYG{c+c1}{//Escribir A}
+	\PYG{n}{K}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{;}	\PYG{c+c1}{//Escribir K}
+\PYG{p}{\PYGZcb{}}
+\PYG{c+cm}{/*******************/}
+\PYG{n}{P2}\PYG{p}{\PYGZob{}}
+	\PYG{k}{while}\PYG{p}{(}\PYG{n}{k}\PYG{o}{==}\PYG{l+m+mi}{0}\PYG{p}{)\PYGZob{}\PYGZcb{}}	\PYG{c+c1}{//Leer K}
+	\PYG{n}{var}\PYG{o}{=}\PYG{n}{A}\PYG{p}{;}	\PYG{c+c1}{//Leer A}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}

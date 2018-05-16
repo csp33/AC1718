@@ -1,0 +1,6 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{n}{P2}\PYG{p}{\PYGZob{}}
+	\PYG{n}{R}\PYG{o}{=}\PYG{l+m+mi}{1}\PYG{p}{;} \PYG{c+c1}{//(c)}
+	\PYG{k}{if}\PYG{p}{(}\PYG{n}{Y}\PYG{o}{==}\PYG{l+m+mi}{1}\PYG{p}{)} \PYG{n}{R}\PYG{o}{=}\PYG{n}{X}\PYG{p}{;} \PYG{c+c1}{//(d)}
+\PYG{p}{\PYGZcb{}}
+\end{Verbatim}
