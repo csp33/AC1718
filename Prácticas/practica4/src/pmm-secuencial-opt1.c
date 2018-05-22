@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 #endif
 
   /***Producto***/
-  double temp,temp1, temp2, temp3, temp4;
+  double temp1, temp2, temp3, temp4;
   clock_gettime(CLOCK_REALTIME, &cgt1);
   for (int i = 0; i < TAM; i++) {
     for (int j = 0; j < TAM; j++) {
@@ -90,13 +90,13 @@ int main(int argc, char **argv) {
       temp2 = 0;
       temp3 = 0;
       temp4 = 0;
-      for (int k = 0; k < TAM; k++) {
-				temp1 += m1[i][k] * m2[k][j];
-				temp2 += m1[i][k+1] * m2[k+1][j];
-				temp3 += m1[i][k+2] * m2[k+2][j];
-				temp4 += m1[i][k+3] * m2[k+3][j];
+      for (int k = 0; k < TAM; k += 4) {
+        temp1 += m1[i][k] * m2[k][j];
+        temp2 += m1[i][k + 1] * m2[k + 1][j];
+        temp3 += m1[i][k + 2] * m2[k + 2][j];
+        temp4 += m1[i][k + 3] * m2[k + 3][j];
       }
-			temp
+      m3[i][j] = temp1 + temp2 + temp3 + temp4;
     }
   }
   clock_gettime(CLOCK_REALTIME, &cgt2);
