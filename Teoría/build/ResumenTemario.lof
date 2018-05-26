@@ -1,0 +1,76 @@
+\babel@toc {spanish}{}
+\babel@toc {spanish}{}
+\contentsline {figure}{\numberline {1}{\ignorespaces Niveles de paralelismo y granularidad\relax }}{7}{figure.caption.7}
+\contentsline {figure}{\numberline {2}{\ignorespaces Paralelismo de tareas\relax }}{8}{figure.caption.9}
+\contentsline {figure}{\numberline {3}{\ignorespaces Paralelismo impl\IeC {\'\i }cito, expl\IeC {\'\i }cito y arquitecturas paralelas\relax }}{10}{figure.caption.11}
+\contentsline {figure}{\numberline {4}{\ignorespaces Detecci\IeC {\'o}n, utilizaci\IeC {\'o}n, implementaci\IeC {\'o}n y extracci\IeC {\'o}n del paralelismo\relax }}{11}{figure.caption.12}
+\contentsline {figure}{\numberline {5}{\ignorespaces Taxonom\IeC {\'\i }a de Flynn\relax }}{12}{figure.caption.13}
+\contentsline {figure}{\numberline {6}{\ignorespaces Arquitectura SISD\relax }}{12}{figure.caption.15}
+\contentsline {figure}{\numberline {7}{\ignorespaces Arquitectura SIMD\relax }}{13}{figure.caption.17}
+\contentsline {figure}{\numberline {8}{\ignorespaces Arquitectura MIMD\relax }}{13}{figure.caption.19}
+\contentsline {figure}{\numberline {9}{\ignorespaces Arquitectura MISD\relax }}{14}{figure.caption.21}
+\contentsline {figure}{\numberline {10}{\ignorespaces Jerarqu\IeC {\'\i }a de buses\relax }}{16}{figure.caption.24}
+\contentsline {figure}{\numberline {11}{\ignorespaces Multietapa\relax }}{16}{figure.caption.25}
+\contentsline {figure}{\numberline {12}{\ignorespaces Barras cruzadas\relax }}{16}{figure.caption.26}
+\contentsline {figure}{\numberline {13}{\ignorespaces Optimizaciones del tiempo de CPU y sus causantes\relax }}{18}{figure.caption.27}
+\contentsline {figure}{\numberline {14}{\ignorespaces SPMD (Single Program Multiple Data).\relax }}{27}{figure.caption.44}
+\contentsline {figure}{\numberline {15}{\ignorespaces MPMD (Multiple Program Multiple Data).\relax }}{27}{figure.caption.45}
+\contentsline {figure}{\numberline {16}{\ignorespaces Principales herramientas de programaci\IeC {\'o}n paralela.\relax }}{29}{figure.caption.49}
+\contentsline {figure}{\numberline {17}{\ignorespaces Comunicaci\IeC {\'o}n uno a uno.\relax }}{29}{figure.caption.52}
+\contentsline {figure}{\numberline {18}{\ignorespaces Comunicaci\IeC {\'o}n uno a todos.\relax }}{30}{figure.caption.54}
+\contentsline {figure}{\numberline {19}{\ignorespaces Comunicaci\IeC {\'o}n todos a uno.\relax }}{30}{figure.caption.56}
+\contentsline {figure}{\numberline {20}{\ignorespaces Comunicaci\IeC {\'o}n todos a todos.\relax }}{31}{figure.caption.58}
+\contentsline {figure}{\numberline {21}{\ignorespaces Todos combinan.\relax }}{31}{figure.caption.60}
+\contentsline {figure}{\numberline {22}{\ignorespaces Recorrido (\textit {scan}).\relax }}{32}{figure.caption.61}
+\contentsline {figure}{\numberline {23}{\ignorespaces Estilos de programaci\IeC {\'o}n paralela.\relax }}{33}{figure.caption.65}
+\contentsline {figure}{\numberline {24}{\ignorespaces Due\IeC {\~n}o-esclavo.\relax }}{33}{figure.caption.67}
+\contentsline {figure}{\numberline {25}{\ignorespaces Diferentes implementaciones de due\IeC {\~n}o-esclavo.\relax }}{34}{figure.caption.68}
+\contentsline {figure}{\numberline {26}{\ignorespaces Descomposici\IeC {\'o}n de datos.\relax }}{34}{figure.caption.70}
+\contentsline {figure}{\numberline {27}{\ignorespaces Divide y Vencer\IeC {\'a}s.\relax }}{35}{figure.caption.72}
+\contentsline {figure}{\numberline {28}{\ignorespaces Cliente-servidor.\relax }}{35}{figure.caption.74}
+\contentsline {figure}{\numberline {29}{\ignorespaces Segmentada (\textit {pipeline}). Decodificaci\IeC {\'o}n JPEG.\relax }}{36}{figure.caption.76}
+\contentsline {figure}{\numberline {30}{\ignorespaces Segmentada (Grafo de dependencias entre tareas).\relax }}{37}{figure.caption.77}
+\contentsline {figure}{\numberline {31}{\ignorespaces Segmentada (Ganancia frente a n\IeC {\'u}mero de procesadores (escalabilidad).\relax }}{40}{figure.caption.78}
+\contentsline {figure}{\numberline {32}{\ignorespaces Tipos de multiprocesadores seg\IeC {\'u}n sistema de memoria.\relax }}{42}{figure.caption.82}
+\contentsline {figure}{\numberline {33}{\ignorespaces Tipos de multiprocesadores seg\IeC {\'u}n empaquetamiento.\relax }}{42}{figure.caption.83}
+\contentsline {figure}{\numberline {34}{\ignorespaces Diferencias entre UMA y NUMA.\relax }}{43}{figure.caption.84}
+\contentsline {figure}{\numberline {35}{\ignorespaces Placa base y CPU UMA.\relax }}{43}{figure.caption.85}
+\contentsline {figure}{\numberline {36}{\ignorespaces Placa base y CPU NUMA.\relax }}{44}{figure.caption.86}
+\contentsline {figure}{\numberline {37}{\ignorespaces Ejemplo de multicore.\relax }}{44}{figure.caption.87}
+\contentsline {figure}{\numberline {38}{\ignorespaces Posibles arquitecturas de multicore.\relax }}{45}{figure.caption.88}
+\contentsline {figure}{\numberline {39}{\ignorespaces Tipos de arquitecturas ILP.\relax }}{45}{figure.caption.89}
+\contentsline {figure}{\numberline {40}{\ignorespaces Alternativas en un core escalar segmentado (se emite una instrucci\IeC {\'o}n por ciclo).\relax }}{46}{figure.caption.90}
+\contentsline {figure}{\numberline {41}{\ignorespaces Alternativas en un core superescalar o VLIW (se emiten varias instrucciones por ciclo pertenecientes a un \IeC {\'u}nico thread).\relax }}{47}{figure.caption.91}
+\contentsline {figure}{\numberline {42}{\ignorespaces Alternativas en multicores (se emiten instrucciones de distintos threads en cada ciclo).\relax }}{47}{figure.caption.92}
+\contentsline {figure}{\numberline {43}{\ignorespaces Hardware y arquitecturas TLP en un chip.\relax }}{47}{figure.caption.93}
+\contentsline {figure}{\numberline {44}{\ignorespaces Sistema de memoria.\relax }}{48}{figure.caption.94}
+\contentsline {figure}{\numberline {45}{\ignorespaces Tipos de estructuras de datos y faltas de coherencia.\relax }}{49}{figure.caption.95}
+\contentsline {figure}{\numberline {46}{\ignorespaces Ejemplo de incoherencia.\relax }}{49}{figure.caption.96}
+\contentsline {figure}{\numberline {47}{\ignorespaces Directorio de memoria principal.\relax }}{51}{figure.caption.100}
+\contentsline {figure}{\numberline {48}{\ignorespaces Alternativas para implementar el directorio.\relax }}{51}{figure.caption.101}
+\contentsline {figure}{\numberline {49}{\ignorespaces Protocolos para mantener coherencia en el sistema de memoria.\relax }}{51}{figure.49}
+\contentsline {figure}{\numberline {50}{\ignorespaces Descripci\IeC {\'o}n de MSI.\relax }}{53}{figure.caption.102}
+\contentsline {figure}{\numberline {51}{\ignorespaces Descripci\IeC {\'o}n de MESI. Quitando lo tachado se obtiene MSI.\relax }}{54}{figure.caption.103}
+\contentsline {figure}{\numberline {52}{\ignorespaces MSI con directorios sin difusi\IeC {\'o}n.\relax }}{55}{figure.caption.105}
+\contentsline {figure}{\numberline {53}{\ignorespaces MSI con directorios con difusi\IeC {\'o}n.\relax }}{56}{figure.caption.107}
+\contentsline {figure}{\numberline {54}{\ignorespaces Presentaci\IeC {\'o}n del sistema a los programadores mediante el modelo SC.\relax }}{57}{figure.caption.108}
+\contentsline {figure}{\numberline {55}{\ignorespaces Ejemplo de ejecuci\IeC {\'o}n con SC.\relax }}{57}{figure.caption.110}
+\contentsline {figure}{\numberline {56}{\ignorespaces Ejemplos de modelos relajados.\relax }}{58}{figure.caption.111}
+\contentsline {figure}{\numberline {57}{\ignorespaces Ejemplo de modelo de ordenaci\IeC {\'o}n d\IeC {\'e}bil.\relax }}{60}{figure.caption.115}
+\contentsline {figure}{\numberline {58}{\ignorespaces Ejemplo de modelo de consistencia de liberaci\IeC {\'o}n.\relax }}{61}{figure.caption.116}
+\contentsline {figure}{\numberline {59}{\ignorespaces Comunicaci\IeC {\'o}n en un procesador.\relax }}{61}{figure.caption.117}
+\contentsline {figure}{\numberline {60}{\ignorespaces Comunicaci\IeC {\'o}n uno-a-uno.\relax }}{62}{figure.caption.118}
+\contentsline {figure}{\numberline {61}{\ignorespaces Comunicaci\IeC {\'o}n colectiva.\relax }}{62}{figure.caption.119}
+\contentsline {figure}{\numberline {62}{\ignorespaces Soporte software y hardware para sincronizaci\IeC {\'o}n.\relax }}{63}{figure.caption.120}
+\contentsline {figure}{\numberline {63}{\ignorespaces Test\&Set\relax }}{64}{figure.caption.121}
+\contentsline {figure}{\numberline {64}{\ignorespaces Fetch\&Add\relax }}{64}{figure.caption.122}
+\contentsline {figure}{\numberline {65}{\ignorespaces Compare\&Swap\relax }}{64}{figure.caption.123}
+\contentsline {figure}{\numberline {66}{\ignorespaces Ejemplo de cerrojo\relax }}{64}{figure.caption.124}
+\contentsline {figure}{\numberline {67}{\ignorespaces Cerrojos con Test\&Set.\relax }}{65}{figure.caption.127}
+\contentsline {figure}{\numberline {68}{\ignorespaces Cerrojos con Fetch\&Or.\relax }}{65}{figure.caption.128}
+\contentsline {figure}{\numberline {69}{\ignorespaces Cerrojos con Compare\&Swap.\relax }}{66}{figure.caption.129}
+\contentsline {figure}{\numberline {70}{\ignorespaces Suma con Fetch\&Add.\relax }}{66}{figure.caption.130}
+\contentsline {figure}{\numberline {71}{\ignorespaces Suma con Compare\&Swap.\relax }}{66}{figure.caption.131}
+\contentsline {figure}{\numberline {73}{\ignorespaces Etapas de un procesador superescalar.\relax }}{69}{figure.caption.134}
+\contentsline {figure}{\numberline {74}{\ignorespaces Emisi\IeC {\'o}n ordenada.\relax }}{70}{figure.caption.137}
+\contentsline {figure}{\numberline {75}{\ignorespaces Emisi\IeC {\'o}n desordenada.\relax }}{71}{figure.caption.138}

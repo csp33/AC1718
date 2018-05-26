@@ -21,7 +21,7 @@
 \usepackage[nottoc]{tocbibind}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-\usepackage[a4paper,left=3cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage[a4paper,left=2cm,right=2cm,top=2.5cm,bottom=2.5cm]{geometry}
 \renewcommand\listoflistingscaption{Códigos fuente}
 \newtheorem*{definition}{Definición}
 \newtheorem*{aclaration}{Aclaración}
@@ -2043,6 +2043,101 @@ Comenzamos la deducción.
 \end{solution}
 \end{figure}
 \end{enumerate}
+
+
+\section{Tema 4}
+
+
+\subsection{Microarquitecturas ILP. Cauces superescalares}
+
+
+\subsubsection{Paralelismo entre instrucciones (ILP). Orden en emisión y finalización}
+
+En una secuencia de instrucciones se pueden distinguir tres órdenes:
+
+\begin{itemize}
+	\item El orden en que se captan las instrucciones (el orden de las instrucciones en el código).
+	\item El orden en que las instrucciones se ejecutan.
+	\item El orden en el que las instrucciones cambian los registros y la memoria.
+\end{itemize}
+
+El procesador superescalar debe ser capaz de identificar el paralelismo entre instrucciones (ILP) del programa y organizar la captación, decodificación y ejecución de instrucciones en paralelo, utilizando eficazmente los recursos existentes (el paralelismo de la máquina).\\
+
+Cuanto más sofisticado sea un procesador superescalar, menos tiene que ajustarse a la ordenación de las instrucciones. La única restricción es que el resultado del programa sea correcto.\\
+
+Un procesador superescalar es un procesador segmentado que puede procesar más de una instrucción en cada etapa. Las etapas son similares a las de un procesador segmentado, aunque hay diferencias:
+
+\begin{enumerate}
+	\item La etapa de \textbf{captación} (\textit{IE}) es capaz de leer varias instrucciones por ciclo desde el nivel de caché más alto (L1).
+	\item Las instrucciones pasan a una cola donde esperan a la \textbf{decodificación} (\textit{ID}).
+	\item Las instrucciones decodificadas deben esperar a que las unidades funcionales necesarias estén disponibles. Para ello, se almacenan en una estructura (ventana de instrucciones, buffer de reorden, de renombramiento, etc.).
+	\item La etapa de \textbf{emisión} (\textit{ISS}) se encarga de determinar las instrucciones disponibles que pueden ejecutarse.
+	\item La etapa  de \textbf{ejecución} se implementa con las unidades funcionales que tiene el procesador. Cuantas más tenga, más instrucciones podrán ejecutarse en un mismo ciclo.
+	\item Por último, se pasa a la etapa de \textbf{escritura} (\textit{WB}) que almacena los datos en los registros del procesador.
+\end{enumerate}
+
+En los procesadores superescalares se distingue entre \textit{ejecución de la instrucción} (la instrucción está en su etapa de ejecución) y \textit{procesamiento de la instrucción} (la instrucción está en alguna etapa del cauce). Cuando se dice que una instrucción ha \textit{terminado de ejecutarse} nos referimos a que ha terminado su etapa de ejecución, mientras que cuando se retira o sale del cauce se dice que ha \textit{finalizado su procesamiento}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{etapas_superescalar.png}
+\caption{Etapas de un procesador superescalar.}
+\end{figure}
+
+En un procesador superescalar las instrucciones se captan y decodifican en el orden en el que aparecen en el programa. Sin embargo, el orden en el que se ejecutan y el orden en el que cambian los registros y la memoria pueden no coincidir con el orden de captación (orden de las instrucciones en el código). Las razones para no respetar el orden se encuentran en la posibilidad de aprovechar de forma más eficaz el paralelismo entre instrucciones y el disponible en el procesador (unidades funcionales libres, etc.).\\
+
+La emisión desoredenada supone implementar aspectos del paradigma del \textbf{flujo de datos}, según el cual la disponibilidad de datos es quien determina qué instrucciones pueden pasar a ejecutarse y no el orden de las instrucciones del programa. Por tanto, las instrucciones comienzan a ejecutarse cuando los datos de los que dependen están disponibles.\\
+
+\paragraph{Decodificación paralela y predecodificación\\}
+
+En un procesador superescalar en el que se decodifican varias instrucciones por ciclo no se pueden comprobar al mismo tiempo las dependencias entre los operandos de las instrucciones decodificadas yt las que ya se están ejecutando. Por ello se añade la etapa de \emph{emisión}. Dada la cantidad de instrucciones que hay que decodificar en cada ciclo pueden requerirse varias etapas para la decodificación. En muchos casos, una de las etapas de decodificación se implementa entre la caché L2 y la caché L1i (etapa de \emph{predecodificación}).\\
+
+La etapa de \textbf{predecodificación} se encarga de determinar el tipo de instrucción, facilitando la identificación posterior de los recursos necesarios. En esta etapa se añaden iuna serie de bits que aceleran la decodificación completa de las instrucciones en la etapa (o etapas) de decodificación posterior.\\
+
+\paragraph{Emisión de instrucciones\\}
+
+La \textbf{decodificación} toma varias instrucciones por ciclo según el orden en el que se encuentran las instrucciones en la cola (orden del programa). Cuando las instrucciones son decodificadas se escriben en una serie de estructuras.\\
+
+Una de esas estructuras es la \textbf{ventana de instrucciones} (o ventana de emisión). Es una cola de registros donde se almacenan las instrucciones que han sido decodificadas y están a la espera de ser emitidas a las unidades funcionales. La etapa de \textbf{emisión} será la que se encargue de determinar la instrucción que puede ejecutarse (cuando las unidades funcionales necesarias estén disponibles). En caso de colisión, aplicará una política determinada.\\
+
+Si la ventana de instrucciones es centralizada, almacenará todas las instrucciones pendientes. Si es distribuida, almacenará sólo las de un único tipo.\\
+
+Las políticas de emisión se pueden clasificar según el \emph{alineamiento} de la ventana de instrucciones y el \emph{orden} en el que se emiten las instrucciones a las correspondientes unidades funcionales. Según el alineamiento podemos distinguir entre:
+
+\begin{itemize}
+	\item Emisión \textbf{alineada}. No se pueden introducir nuevas instrucciones en la ventana deinstrucciones hasta que no esté totalmente vacía, es decir, hasta que no se hayan emitido todas las instrucciones que se introdujeron en un ciclo anterior.
+	\item Emisión \textbf{no alineada}. Se pueden introducir nuevas instrucciones mientras hayya espacio en la ventana.
+\end{itemize}
+
+Según el orden:
+
+\begin{itemize}
+	\item Emisión \textbf{ordenada}. Se respeta el orden en el que entran las instrucciones (orden del programa). De esta forma, si una instrucción no puede emitirse, las siguientes tampoco podrán, aunque tengan sus operandos y unidades funcionales disponibles.
+	\item Emisión \textbf{desordenada}. No existe bloqueo, ya que pueden emitirse todas las instrucciones que tengan disponibles sus operandos y unidades funcionales.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{emision_ordenada.png}
+\caption{Emisión ordenada.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{emision_desordenada.png}
+\caption{Emisión desordenada.}
+\end{figure}
+
+\paragraph{Estaciones de reserva\\}
+
+En muchas microarquitecturas superesacalares la ventan de instrucciones se distribuye en varias estructuras (estaciones de reserva o \emph{consignas}, \textit{shelving}). La idea consiste en tener una ventana de instrucciones específica para cada unidad funcional o conjunto de unidades funcionales.\\
+
+En una microarquitectura con estaciones de reserva, las funciones de la etapa de emisión de desdoblan.
+
+\subsection{Consistencia del procesador y procesamiento de saltos}
+
+
+\subsection{Procesamiento VLIW}
 
 
 \begin{thebibliography}{9}
