@@ -36,6 +36,7 @@
 	\end{center}
 }
 
+
 \title{Arquitectura de Computadores}
 \setlength{\droptitle}{10em}
 \author{Carlos Sánchez Páez}
@@ -2047,11 +2048,8 @@ Comenzamos la deducción.
 
 \section{Tema 4}
 
-
 \subsection{Microarquitecturas ILP. Cauces superescalares}
 
-
-\subsubsection{Paralelismo entre instrucciones (ILP). Orden en emisión y finalización}
 
 En una secuencia de instrucciones se pueden distinguir tres órdenes:
 
@@ -2088,7 +2086,7 @@ En un procesador superescalar las instrucciones se captan y decodifican en el or
 
 La emisión desoredenada supone implementar aspectos del paradigma del \textbf{flujo de datos}, según el cual la disponibilidad de datos es quien determina qué instrucciones pueden pasar a ejecutarse y no el orden de las instrucciones del programa. Por tanto, las instrucciones comienzan a ejecutarse cuando los datos de los que dependen están disponibles.\\
 
-\paragraph{Decodificación paralela y predecodificación\\}
+\subsubsection{Decodificación paralela y predecodificación}
 
 En un procesador superescalar en el que se decodifican varias instrucciones por ciclo no se pueden comprobar al mismo tiempo las dependencias entre los operandos de las instrucciones decodificadas yt las que ya se están ejecutando. Por ello se añade la etapa de \emph{emisión}. Dada la cantidad de instrucciones que hay que decodificar en cada ciclo pueden requerirse varias etapas para la decodificación. En muchos casos, una de las etapas de decodificación se implementa entre la caché L2 y la caché L1i (etapa de \emph{predecodificación}).\\
 
@@ -2132,12 +2130,97 @@ Según el orden:
 
 En muchas microarquitecturas superesacalares la ventan de instrucciones se distribuye en varias estructuras (estaciones de reserva o \emph{consignas}, \textit{shelving}). La idea consiste en tener una ventana de instrucciones específica para cada unidad funcional o conjunto de unidades funcionales.\\
 
-En una microarquitectura con estaciones de reserva, las funciones de la etapa de emisión de desdoblan.
+En una microarquitectura con estaciones de reserva, las funciones de la etapa de emisión de desdoblan. La primera parte se sigue denominando \emph{emisión} y se implementa en la misma etapa de decodificación, que pasa a llamarse etapa de \emph{decodificación/emisión} (ID/ISS). La determinación de qué instrucciones de la estación de reserva tiene sus operandos disponibles y pasa a ejecutarse se denomina \emph{envío} (\textit{dispatch}).
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{ventana_reserva_d.png}
+\caption{Ventana de reserva distribuida.}
+\end{figure}
+
+\subparagraph{Aternativas para el envío a las unidades funcionales\\}
+
+\begin{itemize}
+	\item \textbf{Envío de instrucciones}. Las instrucciones se envían a la unidad (o unidades) funcional desde la estación de reserva cuando se puedan empezar a ejecutar nuevas instrucciones. La política de envío implica la \emph{selección de instrucciones ejecutables}. (aquellas que tengan operandos disponibles). Si hay más de una instrucción ejecutable hay que aplicar una regla de arbitraje (usualmente FIFO). Si una estación de reserva sólo envía instrucciones a una unidad funcional, puede enviar una instrucción por ciclo como máximo. Si es compartida, podrá enviar varias.
+	\item \textbf{Captación y comprobación de la rapidez de operandos}. Cada registro del banco de registros tiene un bit adicional (bit de validez) que indica si el dato está disponible para poder ser utilizado. En caso de que se use una política de captación de operandos en la emisión, si el bit de validez está a 1, se leerá el operando. En caso contrario, en lugar del dato leído se guardará el número de registro en la estación de reserva. Cuando el resultado esté disponible, se actualizarán sus bits de disponibilidad en el banco de registros y en la estación de reserva.
+\end{itemize}
+
+\paragraph{Renombramiento de registros\\}
+
+En los procesadores en los que las instrucciones pueden terminar de ejecutarse desordenadamente debemos disponer de estrategias que eviten los riesgos RAW (dependencia verdadera), WAR y WAW.\\
+
+El \textbf{renombramiento de registros} consiste en utilizar registros de la microarquitectura (visibles o no visibles al programador) como elementos de almacenamiento con el objetivo de eliminar dependencias.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{renombramiento.png}
+\caption{Renombramiento de registros.}
+\end{figure}
+
+Este proceso de renombramiento se puede implementar tanto mediante compilador (utilizando los registros visibles propios de la arquitectura) como mediante compilador. Sin embargo, también se puede implementar mediante hardware incluyendo una serie de registros no accesibles al programador para este propósito. Por tanto, el renombramiento puede ser \emph{estático} si se realiza durante la compilación o \emph{dinámico} si se realiza durante la ejecución utilizando los registros extra. \\
+
+Si el renombramiento es dinámico, las prestaciones del procesador se verán afectadas por la \emph{velocidad de renombramiento}, es decir, el número máximo de binbres asignados por ciclo. La velocidad y el coste del renombramiento vendrán dados por el número y tupo de buffers que se utilizan como registros temporales y por los \emph{mecanismos} (indexados o asociativos) para acceder a los mismos.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{buffer_ren.png}
+\caption{Buffer de renombramiento.}
+\end{figure}
+
+En el acceso \emph{asociativo}, cada línea tiene cinco campos:
+
+\begin{itemize}
+	\item Asignación válida. La línea en cuestión se ha utilizado para renombrar algún registro, por lo que contiene información válida.
+	\item Registro de destino. Registro que se ha renombrado.
+	\item Contenido. Almacena los datos del registro renombrado hasta que se almacenen en el original.	
+	\item Contenido válido. Bit de validez. Si está a 0 significa que alguna instrucción que se ha emitido o enviado va a escribir su resuiltado en el campo de contenido.
+	\item Bit de asignación última. Indica si es la última línea en la que se ha hecho una asignación al registro. Si una instrucción necesita un registro en concreto, elegirá aquel del buffer que tenga este campo a 1.
+\end{itemize}
+
 
 \subsection{Consistencia del procesador y procesamiento de saltos}
 
 
-\subsection{Procesamiento VLIW}
+En el procesamiento de una instrucción debemos distinguir entre:
+
+\begin{itemize}
+	\item El final de la ejecución de la operación codificada en la instrucción (se dispone de los resultados producidos por las unidades funcionales pero no se han modificado los registros).
+	\item El final del procesamiento de la instrucción o momento en el que se completa la instrucción (los resultados se escriben en los registros). Si se usa un buffer de reorden (ROB), se utiliza el término \emph{retirar} en lugar de completar.
+\end{itemize}
+
+La actualización de los registros de la arquitectura a partir de los registros internos en los que se ha renombrado ocurre en la última etapa del cauce, denominada etapa de \emph{finalización o retirada de instrucciones}.\\
+
+La consistencia secuencial de un programa es:
+\begin{itemize}
+	\item El orden en que las instrucciones se completan.
+	\item El orden en que se accede a memoria para leer (LOAD) o escribir (STORE).
+\end{itemize}
+
+Cuando se procesan instrucciones en paralelo, el orden en que termina el procesamiento de las instrucciones puede variar con respecto al que tenían en el programa. Sin embargo, debe existir consistencia entre el orden en que se completan y el orden secuencial que tienen en el código.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{consistencia.png}
+\caption{Tipos de consistencia.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{reordenamiento_load_store.png}
+\caption{Reordenamiento de LOAD y STORE.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{ejemplo_load_store.png}
+\caption{Ejemplo de reordenamiento de LOAD y STORE.}
+\end{figure}
+	
+	
+	
+	
+\subsubsection{Buffer de reordenamiento (ROB)}
+
 
 
 \begin{thebibliography}{9}
