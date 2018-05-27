@@ -2221,6 +2221,260 @@ Cuando se procesan instrucciones en paralelo, el orden en que termina el procesa
 	
 \subsubsection{Buffer de reordenamiento (ROB)}
 
+Al utilizar renombramiento de registros, los resultados de las instrucciones se alojarán en las líneas del buffer de renombrado. El problema reside en decidir el momento en el que pasen a escribirse en los registros, completando la instrucción. Para ello usaremos el \emph{buffer de reordenamiento} (ROB):
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{rob.png}
+\caption{Buffer de reordenamiento.}
+\end{figure}
+
+
+
+\subsubsection{Procesamiento especulativo de saltos}
+
+Los saltos causan una gran reducción de prestaciones en los procesadores superescalares. Cuanto antes detectemos una instrucción de salto, menor será la posible penalización. Los saltos se detectan normalmente en la decodificación (o incluso en la captación, si hay predecodificación).\\
+
+Si en el momento de evaluar un salto la condición no se puede verificar utilizamos el \emph{procesamiento especulativo de saltos}. En cuanto al acceso a las instrucciones del destino del salto, debemos implementar procedimientos para acceder a ellas lo más rápido posible.
+	
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{gestion_saltos.png}
+\caption{Gestión de saltos condicionales no resueltos.}
+\end{figure}
+
+
+La predicción de saltos se basa en la idea de que el comportamiento de una instrucción de salto condicional presenta cierta regularidad, por lo que puede predecirse con una tasa de aciertos bastante elevada. En caso de fallar en la predicción habrá una penalización, por lo que debemos adoptar un modelo de predicción de saltos con una tasa de acierto lo más elevada posible.\\
+
+Los principales esquemas para la predicción de salto son:
+
+\begin{itemize}
+	\item \textbf{Predicción fija}. Se toma siempre la misma decisión: el salto siempre se realiza (\emph{taken}) o nunca (\emph{not taken}).
+	\item \textbf{Predicción verdadera}. La decisión depende de las características del salto.
+		\begin{itemize}
+			\item \textbf{Predicción estática}. La decisión se toma en tiempo de compilación.
+			\item \textbf{Predicción dinámica}. La decisión se toma a partir de las ejecuciones pasadas de la instrucción (historia de la instrucción de salto).
+		\end{itemize}
+\end{itemize}
+
+La \textbf{predicción estática} puede ser basada en el código de operación (dependiendo del tipo de instrucción de salto), en el desplazamiento del salto (si es positivo es un salto hacia delante, si es negativo es hacia atrás, probablemente un bucle) o dirigida por el compilador (fija un bit de predicción en cada instrucción de salto).
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{prediccion_estatica.png}
+\caption{Predicción estática.}
+\end{figure}
+
+En cuanto a la \textbf{predicción dinámica}, para cada instrucción de salto condicional debe guardarse información sobre el comportamiento pasado que permita tomar la decisión. Según la forma de almacenarla, podemos distinguir dos tipos de predicción dinámica:
+
+\begin{itemize}
+	\item \textbf{Implícita}. No hay bits de historia, sino que se almacena la instrucción que se ejecutó tras el salto la última vez que se captó. Es bastante limitado, ya que predice hacer lo mismo que la última vez.
+	\item \textbf{Explícita}. Se almacenan bits de historia. La primera vez que se ejecuta, al no haber historia, se utiliza predicción estática o bien se presupone un valor para los bits de estado.
+\end{itemize}
+
+El porcentaje de aciertos (\textit{prediction accuracy}) es fundamental para mantener un promedio elevado de instrucciones por ciclo.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.75]{prediccion_dinamica.png}
+\caption{Predicción dinamica.}
+\end{figure}
+
+
+A medida que utilizamos más recursos hardware para implementar un esquema de predicción, se pujeden conseguir mayores porcentajes de aciertos. Sin embargo, hemos de tener en cuenta el retardo que introduce la circuitería adicional. \\
+
+Existen varias alternativas para almacenar la información de la historia de saltos: caché de instrucciones, tabla de historia de salto (BHT), caché de instrucciones de salto (BTIC), etc.
+\\
+
+Tras realizar la predicción, el procesador continúa ejecutando instrucciones especulativamente hasta que se resuelve la condición. Puede suceder que aparezcan más instrucciones de salto en la ejecución especulativa, lo que puede hacer que la penalización crezca muchísimo si erramos. Por tanto, debemos buscar una predicción lo mejor posible para evitar penalizaciones en el rendimiento.\\
+
+El \textbf{nivel de especulación} es el número de instrucciones de salto condicional que pueden ejecutarse especulativamente.\\
+
+El \textbf{grado de especulación} indica la etapa hasta la que se procesan las instrucciones que siguien con un camino especulativo tras un salto.\\
+
+
+\paragraph{Instrucciones de ejecución condicional\\}
+
+Pretenden eliminar las instrucciones de salto en los códigos incluyendo en el repertorio máquina instrucciones con operaciones condicionales (instrucciones con predicado).\\
+
+Las instrucciones de ejecución condicional tienen dos partess, la condición (guardia) y la operación propiamente dicha.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{ej_condicional.png}
+\caption{Ejecución condicional.}
+\end{figure}
+
+
+\subsection{Procesamiento VLIW}
+
+
+\subsubsection{Características generales y motivación (ILP hardware vs software)}
+
+Los procesadores VLIW son similares a los superescalares, ya que:
+
+\begin{itemize}
+	\item Son procesadores segmentados que pueden emitir varias instrucciones en cada ciclo.
+	\item Disponen de varias unidades funcionales independientes, por lo que pueden ejecutar varias operaciones a la vez.
+\end{itemize}
+
+Sin embargo, mientras que en los superescalares es el hardware el encargado de detectar el paralelismo, aquí el paralelismo se indica explícitamente en cada instrucción captada. En lugar de enviar varias instrucciones independientes a las unidades funcionales, una arquitectura VLIW empaqueta varais operaciones en una instrucción muy larga (\textit{Very Long Instruction Word}). Por tanto, cada instrucción VLIW codifica operaciones que se ejecutan a la vez.\\
+
+La decisión de qué instrucciones se ejecutarán a la vez (el formamiento de la VLIW) corresponde al compilador, lo que implica un hardware más sencillo que el de un procesador superescalar. Cuantas más instrucciones se emitan por ciclo, más ventajosa será la arquitectura VLIW, ya que no se requiere añadir hardware.\\
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{vliw.png}
+\caption{Esquema VLIW.}
+\end{figure}
+
+
+\subsubsection{Planificación estática}
+
+En un procesador \textbf{VLIW}, la planificación es estática. Por tanto, necesitamos la asistencia del compilador, que puede realizar renombrados, reorganizaciones de código, etc. para mejorar el uso de los recursos, el esquema de predicción de saltos...\\
+
+En un procesador \textbf{escalar}, la predicción es dinámica. Requiere menos asistencia del compilador a cambio de más coste hardware. Facilita la portabilidad de código entre la misma familia de procesadores.\\
+
+El compilador construye paquetes de instrucciones (ventanas de emisión) sin dependencias, de forma que el procesador no tiene que comprobarlas de forma explícita.\\
+
+Hay dos tipos de planificación estática:
+
+\begin{itemize}
+	\item Planificación \textbf{local}. Actúa sobre un bloque básico mediante desenrollado de bucle y planificación de las instrucciones del cuerpo aumentado del bucle.
+	\item Planificación \textbf{global}. Actúa considerando bloques de código entre instrucciones de salto.
+\end{itemize}
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{planificacion_estatica.png}
+\caption{Tipos de planificacion estatica.}
+\end{figure}
+
+\paragraph{Planificación estática local\\}
+
+El \textbf{desenrollado de bucles} consiste en crear bloques básicos más largos, con más sentencias. Estas sentencias suelen ser independientes, ya que operan sobre diferentes datos.\\
+
+La \textbf{segmentación software} (\textit{software pipelining}) consiste en reorganizar los bucles de forma que cada iteración del código transformado contenga instrucciones tomadas de distintas iteraciones del bloque original. De esta forma podemos separar las instrucciones dependientes del bucle original en diferentes iteraciones del bucle nuevo.\\
+
+
+\paragraph{Planificación estática global\\}
+
+Esta planificación mueve código a través de los saltos condicionales (que no correspondan al control del bucle). Se parte de una aproximación de las frecuencias de ejecución de los posibles caminos tras una instrucción de salto condicional. Se apoya en las \textbf{instrucciones con predicado} y en la \textbf{especulación}.
+
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{ejemplo_condicional.png}
+\caption{Ejemplo de instrucciones de ejecución condicional.}
+\end{figure}
+
+
+
+Una operación con predicado es aquella cuyo resultado modifica o no el destino de dicha operación en función del valor del predicado. Se expresa como \textit{$<$p$>$ operacion}. Si $p=1$, la operación se realizará, si no, no. Ejemplo:\\
+\begin{figure}[H]
+\centering
+p1 cmp.eq r1,0\\
+$<$p1$>$ add r3,r2,r0\\
+Si r1=0, entonces r3=r2+r0
+\caption{Ejemplo de instrucciones con predicado (I).}
+\end{figure}
+
+También se pueden asignar varios predicados a la vez. Por ejemplo:
+
+\begin{figure}[H]
+\centering
+p1,p2 cmp.eq r1,0\\
+$<$p1$>$ add r3,r2,r0\\
+$<$p2$>$ sub r3,r2,r0\\
+Si r1=0, p1=1 y p2=0. Por tanto, r3=r2+r0\\
+Si r1$\neq$0, p1=0 y p2=1. Por tanto, r3=r2-r0\\
+\caption{Ejemplo de instrucciones con predicado (II).}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{ej_predicado.png}
+\caption{Instrucciones con predicado.}
+\end{figure}
+
+\subsubsection{Procesamiento especulativo}
+
+El procesamiento especulativo se basa en la prediccción de que una instrucción, condición, etc. es muy probable que se realice, por lo que se adelanta su procesamiento, mejorando las prestaciones.\\
+
+Si la predicción es errónea, el procesamiento especultativo tendrá una penalización, que puede ir desde deshacer el camino hasta tener que incluir código extra para deshacer los cambios realizados, vigilar el comportamiento frente a excepciones, etc.\\
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{procesamiento_especulativo.png}
+\caption{Procesamiento especulativo.}
+\end{figure}
+
+\paragraph{Uso de centinelas para permitir la especulación de las referencias de memoria\\}
+
+Cuando no hay ambigüedad, el compulador adelanta los LOADs respecto a los STOREs para reducir la longitud del camino crítico en el código.\\
+
+Sin embargo, cuando la hay:
+
+\begin{enumerate}
+	\item Se incluye en la arquitectura una instrucción para comprobar los conflictos de direcciones.
+	\item La instrucción se sitúa en la posición original del LOAD (\textbf{centinela}).
+	\item Cuando se ejecutael LOAD especulativo, el hardware guarda la dirección a la que se ha accedido.
+	\item Si los sucesivos STOREs no acceden a esa dirección, la especulación es correcta. En caso contrario, habrá fallado.
+	\item Si la especulación falla:
+	\begin{itemize}
+		\item Si afecta sólo al LOAD, se vuelve a ejecutar al llegar al centinela.
+		\item Si se han ejecutado instrucciones que dependen del LOAD, habrá que repetirlas.
+	\end{itemize}
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{centinela.png}
+\caption{Uso de centinelas.}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.7]{especulacion_s_vs_h.png}
+\caption{Especulación software vs hardware.}
+\end{figure}
+
+Al final, los procesadores que implementan ILP hardware han tomado ideas de la especulación software y viceversa.
+
+\newpage
+
+\subsection{Ejercicios}
+
+
+\begin{enumerate}
+	\item Indique cómo expresar sin instrucciones de salto estas instrucciones (use instrucciones con predicado y suponga que están inicializados a 0).\\
+	if(r2==0) then r2=r2+r3; else r2=r2-r3;
+	\begin{solution}
+		p1,p2 cmp.eq r2,0 (Si p1=1, r2=0. Si p2=1, r2!=0)\\
+		$<$p1$>$ add r2,r2,r3 (r2=r2+r3)\\
+		$<$p2$>$ sub r2,r2,r3 (r2=r2-r3)\\
+	\end{solution}
+\end{enumerate}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 \begin{thebibliography}{9}
