@@ -21,10 +21,19 @@ int main() {
   for (ii = 0; ii < TAM; ii++) {
     X1 = 0;
     X2 = 0;
-    for (i = 0; i < TAM2; i++)
+    for (i = 0; i < TAM2; i+=4) {
       X1 += 2 * s[i].a + ii;
-    for (i = 0; i < TAM2; i++)
       X2 += 3 * s[i].b - ii;
+      //
+      X1 += 2 * s[i+1].a + ii;
+      X2 += 3 * s[i+1].b - ii;
+      //
+      X1 += 2 * s[i+2].a + ii;
+      X2 += 3 * s[i+2].b - ii;
+      //
+      X1 += 2 * s[i+3].a + ii;
+      X2 += 3 * s[i+3].b - ii;
+    }
     if (X1 < X2)
       R[ii] = X1;
     else
