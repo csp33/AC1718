@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# minted
+_minted*
+*.pyg
