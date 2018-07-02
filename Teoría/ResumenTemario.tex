@@ -194,7 +194,7 @@ int main(){
 
 \paragraph{Paralelismo de tareas}
 
-El \emph{paralelismo de tareas} se encuentra extrayendo de la definición de la aplicación la estructura lógica de funciones de la aplicación. En esta estruyctura, los bloques son funciones y las conexiones entre ellos reflejan el flujo de datos entre funciones. Analizando esta estructura podemos encotnrar paralelismo entre las funciones.\\
+El \emph{paralelismo de tareas} se encuentra extrayendo de la definición de la aplicación la estructura lógica de funciones de la aplicación. En esta estruyctura, los bloques son funciones y las conexiones entre ellos reflejan el flujo de datos entre funciones. Analizando esta estructura podemos encontrar paralelismo entre las funciones.\\
 Está relacionado con el \textbf{paralelismo a nivel de función}.
 \begin{figure}[H]
 \centering
@@ -225,7 +225,7 @@ return 0
 \end{listing}
 \subsubsection{Unidades de ejecución: instrucciones, hebras y procesos}
 
-En el nuvel superior, el sistema operativo se encarga de gestionar la ejecución de unidades de mayor granularidad (\textit{procesos} y \textit{hebras}). Cada proceso en ejecución tiene su propia región de memoria. Los sistemas operativos multihebra permiten que un proceso se componga de una o varias hebras.\\
+En el nivel superior, el sistema operativo se encarga de gestionar la ejecución de unidades de mayor granularidad (\textit{procesos} y \textit{hebras}). Cada proceso en ejecución tiene su propia región de memoria. Los sistemas operativos multihebra permiten que un proceso se componga de una o varias hebras.\\
 La diferencia principal entre hebra y proceso es que una hebra tiene su propia pila y contenido de registros, entre ellos IP (\textit{Instruction Pointer}) que almacena la dirección de la siguiente instrucción a ejecutar por la hebra, pero comparte código, variables globales y otros recursos como archivos abiertos con el resto de hebras del mismo proceso. Estas características hacen que las hebras se puedan crear y destruir en menor tiempo que los procesos y que la comunicación, sincronización y conmutación entre hebras de un proceso sea más rápida que entre procesos. Esto permite que las hebras tengan una \textbf{granularidad menor que los procesos}.\\
 El paralelismo implícito en el código de una aplicación se puede hacer \emph{explícito} a nivel de instrucciones, hebras, procesos o dentro de una instrucción.
 \newpage
@@ -253,7 +253,7 @@ El grado de paralelismo de un conjunto de entradas a un sistema es el máximo n�
 \begin{aclaration}
 En el caso de los procesadores, las entradas son instrucciones.
 \end{aclaration}
-Debido a las dependencias entre entradas, este grado máximo será generalmente inferior al de entradas del conjunto. En las arquitecturas ILP VLIW \footnote{Instruction Level Parallelism Very Long Instruction Word} el paralelismo está ya \emph{explícito} en las entradas, ya que el paralelismo se determina fuera del hardware. En este caso, el análisis de dependencias es estático; el compilador es el principal responsable de extraer el paralelismo. No obstante, la ayuda de un prograamador puede incrementar el grado de concurrencia aprovechado finalmente por la arquitectura.\\
+Debido a las dependencias entre entradas, este grado máximo será generalmente inferior al de entradas del conjunto. En las arquitecturas ILP VLIW \footnote{Instruction Level Parallelism Very Long Instruction Word} el paralelismo está ya \emph{explícito} en las entradas, ya que el paralelismo se determina fuera del hardware. En este caso, el análisis de dependencias es estático; el compilador es el principal responsable de extraer el paralelismo. No obstante, la ayuda de un programador puede incrementar el grado de concurrencia aprovechado finalmente por la arquitectura.\\
 Para el compilador es difícil extraer el paralelismo, por lo que si el programador lo hace definiendo hebras y/o procesos se conseguirá mayor concurrencia.
 \begin{figure}[H]
 \centering
